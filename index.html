@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warframe Loot - Pandaahh Pro</title>
+   
+    <style>
+        :root { 
+            --bg: #050505; 
+            --card: rgba(0, 0, 0, 0.45); 
+            --border: rgba(255, 255, 255, 0.15); 
+            --accent: #d4af37; 
+            --rare: #d4af37; 
+            --uncommon: #a1a1aa; 
+            --common: #ffffff; 
+            --halo-color: rgba(212, 175, 55, 0.45); 
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: radial-gradient(circle at 50% 40%, var(--halo-color) 0%, #050505 100%) no-repeat;
+            background-attachment: fixed;
+            background-color: #050505;
+            color: #ffffff; margin: 0; padding: 0; 
+            min-height: 100vh;
+        }
+
+        .sticky-header { 
+            position: sticky; top: 0; 
+            background: rgba(10, 10, 10, 0.7) !important; 
+            border-bottom: 2px solid var(--border); 
+            padding: 15px; z-index: 100; 
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+
+        .header-top { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
+        
+        .search-box { 
+            flex-grow: 1; padding: 12px; background: rgba(0,0,0,0.6); 
+            border: 1px solid var(--border); border-radius: 8px; 
+            color: white; outline: none; font-size: 1rem; 
+            font-weight: 900; text-transform: uppercase;
+        }
+        
+        .btn-orbiteur { 
+            background: var(--accent); color: white !important; 
+            font-weight: 900; font-size: 0.7rem; border: none;
+            min-width: 80px; height: 55px; cursor: pointer; border-radius: 8px;
+            text-transform: uppercase; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            line-height: 1.1;
+        }
+
+        .theme-toggle { 
+            background: transparent !important; border: none !important; 
+            box-shadow: none !important; cursor: pointer; min-width: 60px; height: 55px; 
+            display: flex; align-items: center; justify-content: center;
+        }
+        #themeImg { height: 48px; filter: drop-shadow(0 0 10px var(--accent)); transition: 0.3s; }
+
+        .mode-selector { display: flex; gap: 8px; margin-bottom: 12px; }
+        .mode-btn { 
+            flex: 1; height: 75px; background: rgba(255, 255, 255, 0.05) !important; 
+            border: 1px solid var(--border); border-radius: 8px; cursor: pointer; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            backdrop-filter: blur(10px); transition: 0.3s;
+        }
+        .mode-btn img { height: 40px; opacity: 0.5; filter: grayscale(1); }
+        .mode-btn span { font-size: 0.8rem; font-weight: 900; color: #fff; text-transform: uppercase; }
+        .mode-btn.active { border-color: var(--accent); background: rgba(255,255,255,0.1) !important; opacity: 1; }
+        .mode-btn.active img { opacity: 1; filter: grayscale(0) drop-shadow(0 0 8px var(--accent)); }
+
+        .button-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 10px; }
+        .btn-action { 
+            height: 60px; background: var(--accent); color: #fff !important; 
+            border: none; border-radius: 8px; cursor: pointer; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            font-weight: 900; font-size: 0.75rem; text-transform: uppercase; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8); text-decoration: none;
+        }
+        .btn-action img { height: 35px; } 
+
+        .filter-bar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+        .filter-btn { background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--border); padding: 10px 15px; border-radius: 20px; white-space: nowrap; cursor: pointer; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; backdrop-filter: blur(5px); }
+        .filter-btn.active { background: var(--accent); color: black !important; }
+
+        #results { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; padding: 15px; }
+        .card { 
+            background: rgba(0, 0, 0, 0.45) !important; border: 1px solid var(--border); 
+            border-radius: 12px; padding: 18px; position: relative; 
+            backdrop-filter: blur(25px) saturate(200%); -webkit-backdrop-filter: blur(25px) saturate(200%);
+        }
+        .card h3 { color: var(--accent); font-weight: 900; text-transform: uppercase; text-shadow: 2px 2px 4px #000; margin: 0 0 10px 0; }
+        .cat-label { font-weight: 900; text-transform: uppercase; font-size: 0.8rem; opacity: 0.8; }
+        
+        .item-row { display: flex; justify-content: space-between; padding: 12px 8px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+        .item-row span { font-weight: 800; text-transform: uppercase; text-shadow: 1px 1px 4px #000; }
+        .Rare { color: var(--rare); }
+        .fav-btn { position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 1.3rem; cursor: pointer; }
+        mark { background: #fff; color: #000; font-weight: 900; }
+    
+    
+    
+    
+    
+    /* Force le blanc pur sur les lignes d'items et les pourcentages */
+.item-row span, 
+.item-row b, 
+.card h3 {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important; /* Force pour le moteur de rendu Android */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
+}
+
+/* Empêche le système de changer le fond des cartes */
+.card {
+    background: rgba(0, 0, 0, 0.45) !important;
+    backdrop-filter: blur(25px) saturate(200%) !important;
+}
+
+    
+    
+    
+
+    
+    
+    
+    
+    /* Mode Clair (activé par le bouton) */
+[data-theme="light"] {
+    --bg-site: #e0e0e0;
+    --text-main: #1a1a1a;
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Modifie ton body pour utiliser ces variables */
+body {
+    background-color: var(--bg-site, #050505) !important;
+    color: var(--text-main, #ffffff) !important;
+}
+
+    
+
+    
+    </style>
+</head>
+<body>
+
+<div class="sticky-header">
+    <div class="header-top">
+        <input type="text" id="search" class="search-box" placeholder="RECHERCHE..." oninput="updateSearch()">
+        <button class="btn-orbiteur" onclick="location.href='index3.html'">ORBITEUR<br>SYSTÈME</button>
+<div id="colorCircle" class="picker-container" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid white; background: var(--accent); overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+    <input type="color" id="freePicker" oninput="applyCustomColor(this.value)" style="transform: scale(3); cursor: pointer; border:none; background:none;">
+</div>
+
+<button onclick="toggleLightDark()" 
+    style="width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; outline: none;">
+    <span id="dayNightIcon" style="font-size: 1.2rem;">🌙</span>
+</button>
+
+
+<button class="btn-orbiteur" onclick="location.href='index4.html'">CODEX<br>MOD RELIQUES</button>
+    
+
+
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn"><img src="grineer.png" id="themeImg"></button>
+    </div>
+    
+    <div class="mode-selector">
+        <button class="mode-btn active" id="btn-wiki_en" onclick="setClickMode('wiki_en')"><img src="wiki_en.png"><span>WIKI US</span></button>
+        <button class="mode-btn" id="btn-market" onclick="setClickMode('market')"><img src="plat.png"><span>MARKET</span></button>
+        <button class="mode-btn" id="btn-wiki_fr" onclick="setClickMode('wiki_fr')"><img src="wiki_fr.png"><span>WIKI FR</span></button>
+        <input type="hidden" id="clickMode" value="wiki_en">
+    </div>
+
+    <div class="button-grid">
+        <button class="btn-action" onclick="location.href='index2.html'"><img src="warframe.png"><span>WARFRAME</span></button>
+        <button class="btn-action" onclick="window.location.href='https://pandaahh.fr/warframe'"><img src="pandaahh.png"><span>PANDAAHH</span></button>
+        <button class="btn-action" onclick="window.location.href='https://overframe.gg'"><img src="build.png"><span>Builds</span></button>
+        <button class="btn-action" onclick="window.location.href='https://warframe.market'"><img src="plat.png"><span>MARKET</span></button>
+        <button class="btn-action" onclick="window.location.href='https://www.twitch.tv/pandaahhhhh'"><img src="pandaahh.png"><span>TWITCH</span></button>
+    </div>
+
+    <div class="filter-bar">
+        <button class="filter-btn active" onclick="setFilter('', this)">Tout</button>
+        <button class="filter-btn" onclick="setFilter('Relic', this)">Reliques</button>
+        <button class="filter-btn" onclick="setFilter('Blueprint', this)">Schémas</button>
+        <button class="filter-btn" onclick="setFilter('Mod', this)">Mods</button>
+        <button class="filter-btn" onclick="setFilter('Cetus', this)">Cetus</button>
+        <button class="filter-btn" onclick="setFilter('Deimos', this)">Deimos</button>
+        <button class="filter-btn" onclick="setFilter('Vault', this)">Vaults</button>
+        <button class="filter-btn" onclick="setFilter('Duviri', this)">Duviri</button>
+        <button class="filter-btn" onclick="setFilter('Zariman', this)">Zariman</button>
+        <button class="filter-btn" onclick="setFilter('Orb Vallis', this)">Orb Vallis</button>
+    </div>
+</div>
+
+<div id="results"></div>
+
+<script src="data.js"></script>
+<script>
+    var searchInput = document.getElementById('search');
+    var resultsContainer = document.getElementById('results');
+    var themeImg = document.getElementById('themeImg');
+    var activeFilterTag = '';
+    var favorites = JSON.parse(localStorage.getItem('wf_favorites')) || [];
+    var currentThemeIndex = 0; 
+
+    var themes = [
+        {name:'GRINEER', color:'#d4af37', halo:'rgba(212, 175, 55, 0.45)', img:'grineer.png'},
+        {name:'CORPUS', color:'#00d4ff', halo:'rgba(0, 212, 255, 0.45)', img:'corpus.png'},
+        {name:'INFESTÉ', color:'#00ff88', halo:'rgba(0, 255, 136, 0.45)', img:'infeste.png'},
+        {name:'STALKER', color:'#ff0000', halo:'rgba(255, 0, 0, 0.45)', img:'stalker.png'},
+        {name:'OROKIN', color:'#e8d080', halo:'rgba(232, 208, 128, 0.45)', img:'orokin.png'}
+    ];
+
+function applyCustomColor(color) {
+    document.documentElement.style.setProperty('--accent', color);
+    document.documentElement.style.setProperty('--rare', color);
+    document.body.style.background = `radial-gradient(circle at 50% 40%, ${color}77 0%, #050505 100%) fixed no-repeat`;
+    
+    // Mise à jour visuelle de la boule
+    const circle = document.getElementById('colorCircle');
+    if (circle) circle.style.background = color;
+
+    // SAUVEGARDE : On stocke la couleur et on dit qu'on est en mode "custom"
+    localStorage.setItem('wf_custom_color', color);
+    localStorage.setItem('vaisseau_theme_index', 'custom'); 
+    
+    updateSearch();
+}
+
+function applyTheme(index) {
+    const current = themes[index];
+    document.documentElement.style.setProperty('--accent', current.color);
+    document.documentElement.style.setProperty('--rare', current.color);
+    document.body.style.background = `radial-gradient(circle at 50% 40%, ${current.halo} 0%, #050505 100%) fixed no-repeat`;
+    themeImg.src = current.img;
+
+    // Mise à jour visuelle de la boule
+    const circle = document.getElementById('colorCircle');
+    if (circle) circle.style.background = current.color;
+    
+    // On met à jour le sélecteur pour qu'il affiche la couleur de la faction
+    const picker = document.getElementById('freePicker');
+    if (picker) picker.value = current.color;
+
+    // SAUVEGARDE : On stocke l'index de la faction et on efface la couleur custom
+    localStorage.setItem('vaisseau_theme_index', index);
+    localStorage.removeItem('wf_custom_color'); 
+    
+    updateSearch();
+}
+
+
+
+    function toggleTheme() {
+        currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+        applyTheme(currentThemeIndex);
+    }
+
+    function setClickMode(mode) {
+        document.getElementById('clickMode').value = mode;
+        document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('btn-' + mode).classList.add('active');
+    }
+
+    function setFilter(tag, btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilterTag = tag;
+        updateSearch();
+    }
+
+    function toggleFav(zone) {
+        if (favorites.indexOf(zone) > -1) favorites = favorites.filter(f => f !== zone);
+        else favorites.push(zone);
+        localStorage.setItem('wf_favorites', JSON.stringify(favorites));
+        updateSearch();
+    }
+
+function renderCards(data) {
+    var html = '';
+    var query = searchInput.value.toLowerCase().trim();
+    if (!data) return;
+    
+    data.slice(0, 60).forEach(entry => {
+        var isFav = favorites.indexOf(entry.zone) > -1;
+        var itemsHtml = '';
+        
+            entry.items.forEach(item => {
+                var isSpecificMatch = query !== "" && item.n.toLowerCase().includes(query);
+                
+                // Si c'est le mod cherché, on lui donne un style de "Bouton Allumé"
+                var itemStyle = isSpecificMatch 
+                    ? `background-color: var(--accent) !important; 
+                       color: #000000 !important; 
+                       padding: 4px 8px; 
+                       border-radius: 4px; 
+                       font-weight: 900; 
+                       display: inline-block; 
+                       width: auto;` 
+                    : '';
+
+                itemsHtml += `
+                <div class="item-row" onclick="handleItemClick('${item.n.replace(/'/g, "\\'")}')" 
+                     style="${isSpecificMatch ? 'background: rgba(255,255,255,0.1);' : ''}">
+                    <span class="${item.r}" style="${itemStyle}">${item.n.toUpperCase()}</span>
+                    <span style="opacity:1; font-weight: 800; ${isSpecificMatch ? 'color: var(--accent);' : ''}">${item.p}</span>
+                </div>`;
+            });
+
+
+        html += `
+        <div class="card ${entry.isMatch ? 'highlight' : ''}">
+            <button class="fav-btn" onclick="toggleFav('${entry.zone.replace(/'/g, "\\'")}')" style="filter:grayscale(${isFav ? 0 : 1})">⭐</button>
+            <div class="cat-label">${entry.cat}</div>
+            <h3>${entry.zone}</h3>
+            <div style="font-size:0.75rem; color:#888; margin-bottom:8px; font-weight: bold;">${entry.rot || ''}</div>
+            ${itemsHtml}
+        </div>`;
+    });
+    resultsContainer.innerHTML = html;
+}
+
+
+
+function toggleLightDark() {
+    const html = document.documentElement;
+    const icon = document.getElementById('dayNightIcon');
+    
+    if (html.getAttribute('data-theme') === 'light') {
+        html.removeAttribute('data-theme');
+        icon.innerText = '🌙';
+        localStorage.setItem('site_theme', 'dark');
+    } else {
+        html.setAttribute('data-theme', 'light');
+        icon.innerText = '☀️';
+        localStorage.setItem('site_theme', 'light');
+    }
+}
+
+// À AJOUTER dans ton window.onload pour charger le thème sauvegardé
+const savedTheme = localStorage.getItem('site_theme');
+if (savedTheme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.getElementById('dayNightIcon').innerText = '☀️';
+}
+
+
+
+
+
+
+    function handleItemClick(name) {
+        var mode = document.getElementById('clickMode').value;
+        var link = name.replace(/\s+/g, '_');
+        if (mode === 'market') window.location.href = "https://warframe.market/items/" + link.toLowerCase();
+        else if (mode === 'wiki_fr') window.location.href = "https://warframe.fandom.com/fr/wiki/Spécial:Recherche?query=" + encodeURIComponent(name);
+        else window.location.href = "https://wiki.warframe.com/" + link;
+    }
+
+    function updateSearch() {
+    var query = searchInput.value.toLowerCase().trim();
+    var dataToUse = (typeof dropData !== 'undefined') ? dropData : [];
+    
+    // On filtre les données
+    var filtered = dataToUse.filter(e => 
+        e.zone.toLowerCase().includes(query) || 
+        e.cat.toLowerCase().includes(query) || 
+        e.items.some(i => i.n.toLowerCase().includes(query))
+    );
+
+    // LOGIQUE DE SURBRILLANCE :
+    // On marque chaque élément pour savoir s'il correspond à la recherche
+    filtered.forEach(e => {
+        e.isMatch = query !== "" && (
+            e.zone.toLowerCase().includes(query) || 
+            e.items.some(i => i.n.toLowerCase().includes(query))
+        );
+    });
+
+    if (activeFilterTag) {
+        filtered = filtered.filter(e => 
+            e.cat.toLowerCase().includes(activeFilterTag.toLowerCase()) || 
+            e.zone.toLowerCase().includes(activeFilterTag.toLowerCase())
+        );
+    }
+
+    filtered.sort((a, b) => (favorites.includes(b.zone) ? 1 : 0) - (favorites.includes(a.zone) ? 1 : 0));
+    
+    // On envoie les données à ta fonction d'affichage
+    renderCards(filtered);
+}
+
+    window.onload = () => {
+    const savedTheme = localStorage.getItem('vaisseau_theme_index');
+    const savedColor = localStorage.getItem('wf_custom_color');
+
+    if (savedTheme === 'custom' && savedColor) {
+        // Si on était en mode personnalisé, on remet la couleur
+        applyCustomColor(savedColor);
+        if(document.getElementById('freePicker')) {
+            document.getElementById('freePicker').value = savedColor;
+        }
+    } else {
+        // Sinon on applique le thème de faction sauvegardé (ou 0 par défaut)
+        let indexToApply = (savedTheme !== null) ? parseInt(savedTheme) : 0;
+        applyTheme(indexToApply);
+    }
+    
+    updateSearch();
+};
+
+</script>
+</body>
+</html>

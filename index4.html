@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>WARFRAME CODEX | SYSTEM</title>
+    
+    <script src="data.js"></script>
+    <script src="Mods.js"></script>
+    <script src="Arcanes.js"></script>
+    <script src="Relics.js"></script>
+    <script src= "All.js"></script>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap');
+    
+:root { 
+    --bg: #050505; 
+    --card: rgba(0, 0, 0, 0.45); 
+    --border: rgba(255, 255, 255, 0.15); 
+    --accent: #d4af37; 
+    --halo-color: rgba(212, 175, 55, 0.45); 
+}
+
+body { 
+    font-family: 'Segoe UI', Roboto, sans-serif; 
+    background: radial-gradient(circle at 50% 40%, var(--halo-color) 0%, #050505 100%) no-repeat;
+    background-attachment: fixed;
+    background-color: #050505;
+    color: #ffffff; margin: 0; padding: 0; 
+    min-height: 100vh;
+}
+
+.header { 
+    background: rgba(0, 0, 0, 0.75) !important; 
+    backdrop-filter: blur(15px) !important; 
+    padding: 15px; border-bottom: 2px solid var(--accent); 
+    position: sticky; top: 0; z-index: 1000; 
+}
+
+.nav-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+
+.wf-btn { 
+    text-decoration: none; color: var(--accent) !important; 
+    font-family: 'Orbitron', sans-serif; font-size: 0.7em; font-weight: bold; 
+    padding: 10px 15px; background: #000 !important; 
+    border: 1px solid var(--accent) !important; 
+    border-radius: 4px; text-transform: uppercase; cursor: pointer; transition: 0.3s; 
+}
+
+.wf-btn:hover, .wf-btn.active { 
+    background: var(--accent) !important; color: #000 !important; 
+    box-shadow: 0 0 15px var(--accent); 
+}
+
+#colorSphere { width: 30px; height: 30px; border-radius: 50%; border: 2px solid white; cursor: pointer; background: var(--accent); box-shadow: 0 0 10px var(--accent); transition: 0.3s; }
+
+.destination-selector { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+
+.dest-btn { 
+    flex: 1; height: 75px !important; 
+    background: #111 !important; 
+    border: 2px solid var(--accent) !important; 
+    border-radius: 8px; 
+    cursor: pointer; display: flex; align-items: center; 
+    justify-content: center; transition: 0.3s; 
+    color: #fff; font-weight: 900; font-family: 'Orbitron', sans-serif;
+}
+
+.dest-btn.active { 
+    background: var(--accent) !important; 
+    color: #000 !important;
+    box-shadow: 0 0 20px var(--accent);
+}
+
+.dest-btn img { height: 45px; width: auto; margin-right: 12px; transition: 0.3s; }
+
+.sub-filters { 
+    display: none; justify-content: center; gap: 5px; margin-top: 10px; margin-bottom: 10px; 
+    flex-wrap: wrap;
+}
+.sub-btn { 
+    padding: 6px 10px; font-size: 0.65em; border-radius: 3px; 
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    color: #ccc; cursor: pointer; font-family: 'Orbitron', sans-serif; transition: 0.2s;
+}
+.sub-btn.active { 
+    border-color: var(--accent); color: var(--accent); background: rgba(0,0,0,0.5); 
+    box-shadow: inset 0 0 5px var(--accent);
+}
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 20px; }
+
+.card { 
+    background: var(--card) !important; border: 1px solid var(--border); 
+    border-radius: 8px; padding: 10px; text-align: center; 
+    transition: 0.2s; cursor: pointer; backdrop-filter: blur(5px); 
+}
+
+.card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 5px 15px var(--accent); }
+.card img { width: 100%; height: 200px; object-fit: contain; }
+.card-name { font-family: 'Orbitron', sans-serif; color: var(--accent); font-size: 0.8em; margin-top: 10px; }
+
+input[type="text"] { width: 85%; padding: 12px; background: #000; border: 2px solid var(--accent); color: #fff; border-radius: 4px; font-size: 18px; font-family: 'Orbitron', sans-serif; outline: none; }
+
+#overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
+.modal { width: 90%; max-width: 600px; background: #050505; border: 2px solid var(--accent); padding: 25px; border-radius: 10px; max-height: 90vh; overflow-y: auto; }
+
+.drop-item-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+.drop-item-row:hover { background: var(--accent); color: #000; }
+</style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="nav-top">
+            <a href="index.html" class="wf-btn">⇠ RETOUR</a>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div id="colorSphere" onclick="document.getElementById('freePicker').click()"></div>
+                <input type="color" id="freePicker" style="display:none;" oninput="applyCustomColor(this.value)">
+                <button id="themeBtn" class="wf-btn" onclick="cycleTheme()">THEME: GRINEER</button>
+            </div>
+        </div>
+        <div class="destination-selector">
+            <button id="destWiki" class="dest-btn" onclick="setDestination('wiki')">
+                <img src="https://cdn-icons-png.flaticon.com/512/52/52349.png"> WIKI
+            </button>
+            <button id="destMarket" class="dest-btn" onclick="setDestination('market')">
+                <img src="plat.png"> MARKET
+            </button>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 10px;">
+            <button id="btnFilterAll" class="wf-btn active" onclick="setFilter('all')">TOUT</button>
+            <button id="btnFilterMods" class="wf-btn" onclick="setFilter('mod')">MODS</button>
+            <button id="btnFilterRelics" class="wf-btn" onclick="setFilter('relic')">RELIQUES</button>
+            <button id="btnFilterArcanes" class="wf-btn" onclick="setFilter('arcane')">ARCANES</button>
+            <button id="btnFilterWarframes" class="wf-btn" onclick="setFilter('warframe')">WARFRAMES</button>
+            <button id="btnFilterWeapons" class="wf-btn" onclick="setFilter('weapon')">ARMES</button>
+        </div>
+
+        <div id="relicFilters" class="sub-filters">
+            <button class="sub-btn active" onclick="setSubFilter('ALL')">TOUT</button>
+            <button class="sub-btn" onclick="setSubFilter('LITH')">LITH</button>
+            <button class="sub-btn" onclick="setSubFilter('MESO')">MESO</button>
+            <button class="sub-btn" onclick="setSubFilter('NEO')">NEO</button>
+            <button class="sub-btn" onclick="setSubFilter('AXI')">AXI</button>
+            <button class="sub-btn" onclick="setSubFilter('REQUIEM')">REQ</button>
+        </div>
+
+        <div id="modFilters" class="sub-filters">
+            <button class="sub-btn active" onclick="setSubFilter('ALL')">TOUT</button>
+            <button class="sub-btn" onclick="setSubFilter('Madurai')">MADURAI</button>
+            <button class="sub-btn" onclick="setSubFilter('Vazarin')">VAZARIN</button>
+            <button class="sub-btn" onclick="setSubFilter('Naramon')">NARAMON</button>
+            <button class="sub-btn" onclick="setSubFilter('Zenurik')">ZENURIK</button>
+            <button class="sub-btn" onclick="setSubFilter('Umbra')">UMBRA</button>
+        </div>
+
+        <center><input type="text" id="search" placeholder="RECHERCHER..." oninput="resetView()"></center>
+    </div>
+
+    <div id="grid" class="grid"></div>
+
+    <div id="overlay" onclick="closeModale()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <img id="mImg" src="" style="width:100%; height:250px; object-fit:contain;">
+            <h2 id="mName" style="font-family:'Orbitron'; color:var(--accent); text-align: center; cursor:pointer; text-decoration: underline;"></h2>
+            <div id="mDesc" style="font-size: 0.9em; border-top: 1px solid var(--accent); padding-top:10px; margin-top:10px; color:#ccc; text-align:center;"></div>
+            
+            <div id="relicUI" style="display:none; margin-top:15px;">
+                <b style="color:var(--accent); font-family:'Orbitron'; font-size:0.75em;">📦 RÉCOMPENSES :</b>
+                <div id="relicItems" style="margin-top:10px;"></div>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--accent); padding: 12px; margin-top: 15px; border-radius: 5px;">
+                <b style="color:var(--accent); font-family: 'Orbitron'; font-size: 0.75em;">📍 OÙ TROUVER :</b>
+                <div id="mDrops" style="margin-top:8px; color:#bbb; font-size: 0.85em;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const themes = [{n:"GRINEER", c:"#d4af37"},{n:"CORPUS", c:"#00d4ff"},{n:"INFESTÉ", c:"#00ff88"},{n:"STALKER", c:"#ff0000"},{n:"OROKIN", c:"#e8d080"}];
+        
+        const mesReliquesLith = { 1: "1 reliques lith.png", 2: "2 reliques lith.png", 3: "3 reliques lith.png", 4: "4 reliques lith.png" };
+        const mesMeso = { 1: "meso1.png", 2: "meso2.png", 3: "meso3.png", 4: "meso4.png" };
+        const mesNeo = { 1: "neo1.png", 2: "neo2.png", 3: "neo3.png", 4: "neo4.png" };
+        const mesAxi = { 1: "axi1.png", 2: "axi2.png", 3: "axi3.png", 4: "axi4.png" };
+        const mesReq = { 1: "req1.png", 2: "req2.png", 3: "req3.png", 4: "req4.png" };
+
+        let allData = [];
+        let limit = 24;
+        let currentFilter = 'mod';
+        let subFilter = 'ALL';
+        let currentDestination = localStorage.getItem('wf_codex_dest') || 'market';
+
+        function updateUI(color, name) {
+            document.documentElement.style.setProperty('--accent', color);
+            document.documentElement.style.setProperty('--halo-color', color + '44'); 
+            localStorage.setItem('wf_codex_color', color); 
+            localStorage.setItem('wf_codex_theme_name', name);
+            if(document.getElementById('themeBtn')) document.getElementById('themeBtn').innerText = "THEME: " + name;
+            if(document.getElementById('colorSphere')) document.getElementById('colorSphere').style.background = color;
+        }
+
+        function cycleTheme() {
+            let currentName = localStorage.getItem('wf_codex_theme_name') || "GRINEER";
+            let idx = themes.findIndex(t => t.n === currentName);
+            let next = themes[(idx + 1) % themes.length];
+            updateUI(next.c, next.n);
+        }
+
+        function applyCustomColor(color) { updateUI(color, "PERSO"); }
+
+        function setDestination(dest) {
+            currentDestination = dest;
+            localStorage.setItem('wf_codex_dest', dest);
+            document.getElementById('destWiki').classList.toggle('active', dest === 'wiki');
+            document.getElementById('destMarket').classList.toggle('active', dest === 'market');
+        }
+
+      
+      
+      
+      
+      
+      
+function handleItemClick(name) {
+    let clean = name.replace(/\s+/g, '_');
+    
+    if (currentDestination === 'market') {
+        let marketName = clean.toLowerCase();
+        
+        // CORRECTION ICI : Si c'est un Prime et que ce n'est pas déjà un set/partie
+        if (marketName.includes('prime') && !marketName.includes('set') && !marketName.includes('blueprint')) {
+            marketName += '_set';
+        }
+        
+        window.open(`https://warframe.market/items/${marketName}`, '_blank');
+    } else {
+        // Le Wiki accepte "Acceltra_Prime" sans problème
+        window.open(`https://wiki.warframe.com/${clean}`, '_blank');
+    }
+}
+
+      
+      
+      
+      
+      
+      
+      
+        function openWiki(term) {
+            let parts = term.split('/');
+            let name = parts[parts.length - 1]; 
+            name = name.replace(/Mod Drop Chance.*/i, '');
+            name = name.split(':')[0].split(',')[0].split('(')[0].trim();
+            if (name.includes("New Loka")) name = "New Loka";
+            if (name.includes("Perrin Sequence")) name = "The Perrin Sequence";
+            if (name.includes("Red Veil")) name = "Red Veil";
+            if (name.includes("Arbiters of Hexis")) name = "Arbiters of Hexis";
+            if (name.includes("Cephalon Suda")) name = "Cephalon Suda";
+            if (name.includes("Steel Meridian")) name = "Steel Meridian";
+            if (name.toLowerCase().includes("vault")) name = "Derelict Vault";
+            const urlName = encodeURIComponent(name);
+            window.open(`https://wiki.warframe.com/w/${urlName}`, '_blank');
+        }
+
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+        function boot() {
+            allData = [];
+            // CHARGEMENT MODS
+            if (typeof modsData !== 'undefined') {
+                modsData.forEach(m => {
+                    const isInvalid = m.name.includes("Lens") || m.name.includes("Lentille") || 
+                                     m.name.includes("Spike") || m.name.includes("Contamination") ||
+                                     m.name.includes("Amarsetmod") || m.name.includes("Focus");
+                    const hasImage = m.imageName || m.wikiaThumbnail;
+                    if (!isInvalid && hasImage) {
+                        allData.push({ ...m, type: 'mod', searchKey: (m.name + ' ' + (m.polarity || '')).toLowerCase() });
+                    }
+                });
+            }
+          
+            // CHARGEMENT ALL.JS (WARFRAMES, ARMES, ARCANES)
+            if (typeof allJsonData !== 'undefined') {
+                allJsonData.forEach(item => {
+                    let cat = (item.category || "").toLowerCase();
+                    let type = '';
+                    if (cat === "warframes" || cat.includes("warframe")) type = 'warframe';
+                    else if (cat === "primary" || cat === "secondary" || cat === "melee") type = 'weapon';
+                    else if (cat.includes("arcane")) type = 'arcane'; // Ajout des Arcanes
+
+                    if (type !== '') {
+                        allData.push({
+                            name: item.name,
+                            type: type,
+                            imageName: item.imageName,
+                            category: item.category,
+                            levelStats: item.levelStats,
+                            drops: item.drops,
+                            searchKey: (item.name + " " + type).toLowerCase()
+                        });
+                    }
+                });
+            }
+
+            // CHARGEMENT RELIQUES
+            if (typeof dropData !== 'undefined') {
+                const names = new Set();
+                dropData.forEach(e => { if (e.cat === "Relics") names.add(e.zone); });
+                names.forEach(n => {
+                    let img = 'https://static.wikia.nocookie.net/warframe/images/d/d4/VoidRelicHiRes.png';
+                    let t = 1; if (n.includes("Exceptional")) t = 2; else if (n.includes("Flawless")) t = 3; else if (n.includes("Radiant")) t = 4;
+                    if (n.includes("Lith")) img = mesReliquesLith[t]; else if (n.includes("Meso")) img = mesMeso[t]; else if (n.includes("Neo")) img = mesNeo[t]; 
+                    else if (n.includes("Axi") || n.includes("Vanguard")) img = mesAxi[t]; else if (n.includes("Requiem")) img = mesReq[t];
+                    const relicContent = dropData.find(e => e.zone === n)?.items.map(i => i.n).join(" ") || "";
+                    allData.push({ name: n, type: 'relic', wikiaThumbnail: img, searchKey: (n + " " + relicContent).toLowerCase() });
+                });
+            }
+            display();
+        }
+
+        function display() {
+            const container = document.getElementById('grid');
+            const search = document.getElementById('search').value.toLowerCase();
+            const filtered = allData.filter(i => {
+                const matchSearch = i.searchKey.includes(search);
+                const matchTab = (currentFilter === 'all') ? true : (i.type === currentFilter);
+                let matchSub = true;
+                if (subFilter !== 'ALL' && currentFilter !== 'all') {
+                    if (currentFilter === 'relic') matchSub = i.name.toUpperCase().includes(subFilter);
+                    else if (currentFilter === 'mod') matchSub = i.polarity && i.polarity.toUpperCase() === subFilter.toUpperCase();
+                }
+                return matchTab && matchSearch && matchSub;
+            });
+
+            const slice = filtered.slice(container.children.length, container.children.length + limit);
+            slice.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                
+            
+            
+            
+            
+            
+            
+// --- LOGIQUE MODS : TEST JPG PUIS PNG ---
+let finalImg = "";
+
+if (item.wikiaThumbnail) {
+    finalImg = item.wikiaThumbnail;
+} else if (item.type === 'mod') {
+    // On part sur du JPG par défaut pour les mods
+    finalImg = "img/MON_TRI_WARFRAME/Mods/" + item.name + ".jpg";
+} else {
+    // Le reste (All.js) reste inchangé
+    finalImg = item.imageName || "";
+}
+
+// AFFICHAGE AVEC DOUBLE TEST (JPG -> PNG)
+div.innerHTML = `
+    <img src="${finalImg}" loading="lazy" 
+         style="width:100%; height:200px; object-fit:contain;" 
+         onerror="if (this.src.endsWith('.jpg')) { 
+                    this.src = 'img/MON_TRI_WARFRAME/Mods/${item.name}.png'; 
+                  } else { 
+                    this.src = 'https://via.placeholder.com/150?text=INTROUVABLE'; 
+                  }">
+    <div class="card-name" style="padding: 2px 5px; color: gold;">${item.name}</div>
+    <div style="font-size:10px; color:#aaa; text-align:center; text-transform:uppercase;">
+        ${item.category || item.type}
+    </div>
+`;
+
+
+             
+             
+             
+             
+             
+        
+        
+        
+        
+        
+                div.onclick = () => {
+                    document.getElementById('mImg').src = finalImg;
+                    document.getElementById('mName').innerText = item.name;
+                    document.getElementById('mName').onclick = () => handleItemClick(item.name);
+                    
+                    if (item.type === 'arcane') {
+                        document.getElementById('relicUI').style.display = 'none';
+                        document.getElementById('mDesc').innerHTML = item.levelStats ? item.levelStats[item.levelStats.length - 1].stats.join('<br>') : "Stats non dispos";
+                        document.getElementById('mDrops').innerHTML = (item.drops && item.drops[0]) ? item.drops[0].location : "Inconnu";
+                    } else if (item.type === 'relic') {
+                        document.getElementById('relicUI').style.display = 'block';
+                        const rItems = document.getElementById('relicItems'); rItems.innerHTML = "";
+                        dropData.find(e => e.zone === item.name)?.items.forEach(it => {
+                            const row = document.createElement('div'); row.className = "drop-item-row";
+                            row.innerHTML = `<span>${it.n}</span><span style="color:var(--accent)">${it.p}</span>`;
+                            row.onclick = () => handleItemClick(it.n); rItems.appendChild(row);
+                        });
+                        document.getElementById('mDesc').innerText = "Relique du Néant";
+                        document.getElementById('mDrops').innerHTML = "Missions Fissures";
+                    } else {
+                        document.getElementById('relicUI').style.display = 'none';
+                        document.getElementById('mDesc').innerHTML = item.levelStats ? item.levelStats[item.levelStats.length - 1].stats.join('<br>') : (item.category || "");
+                        
+                        let dropHtml = "";
+                        if (item.drops && item.drops.length > 0) {
+                            dropHtml = item.drops.map(d => {
+                                let displayName = d.location.replace(/Mod Drop Chance.*/i, '').split(':')[0].trim();
+                                let chanceText = d.chance ? (d.chance * 100).toFixed(1) + '%' : d.rarity;
+                                return `<div style="margin-bottom:8px;"><span onclick="openWiki('${d.location.replace(/'/g, "\\'")}')" style="cursor:pointer; text-decoration:underline; color:var(--accent);">📍 ${displayName}</span><span style="color:#888; font-size:0.85em;"> [${chanceText}]</span></div>`;
+                            }).join("");
+                        } 
+                        if (typeof dropData !== 'undefined') {
+                            const globalDrops = dropData.filter(z => z.items && z.items.some(drop => drop.n === item.name));
+                            if (globalDrops.length > 0) {
+                                dropHtml += globalDrops.slice(0, 4).map(z => {
+                                    let itemInfo = z.items.find(it => it.n === item.name);
+                                    let displayZone = z.zone.replace(/Mod Drop Chance.*/i, '').split(':')[0].trim();
+                                    return `<div style="margin-bottom:8px;"><span onclick="openWiki('${z.zone.replace(/'/g, "\\'")}')" style="cursor:pointer; text-decoration:underline; color:#fff;">🚀 ${displayZone}</span><b style="color:var(--accent); font-size:0.85em;"> [${itemInfo.p}]</b></div>`;
+                                }).join("");
+                            }
+                        }
+                        document.getElementById('mDrops').innerHTML = dropHtml || "Loot inconnu";
+                    }
+                    document.getElementById('overlay').style.display = 'flex';
+                };
+                container.appendChild(div);
+            });
+        }
+
+        function setFilter(f) {
+            currentFilter = f;
+            document.getElementById('btnFilterAll').classList.toggle('active', f === 'all');
+            document.getElementById('btnFilterMods').classList.toggle('active', f === 'mod');
+            document.getElementById('btnFilterRelics').classList.toggle('active', f === 'relic');
+            document.getElementById('btnFilterWarframes').classList.toggle('active', f === 'warframe');
+            document.getElementById('btnFilterWeapons').classList.toggle('active', f === 'weapon');
+            document.getElementById('btnFilterArcanes').classList.toggle('active', f === 'arcane');
+            if (document.getElementById('modFilters')) document.getElementById('modFilters').style.display = (f === 'mod') ? 'flex' : 'none';
+            if (document.getElementById('relicFilters')) document.getElementById('relicFilters').style.display = (f === 'relic') ? 'flex' : 'none';
+            resetView();
+        }
+
+        function setSubFilter(type) { subFilter = type; resetView(); }
+        function resetView() { document.getElementById('grid').innerHTML = ''; display(); }
+        function closeModale() { document.getElementById('overlay').style.display = 'none'; }
+        
+        window.onload = () => {
+            updateUI(localStorage.getItem('wf_codex_color') || "#d4af37", localStorage.getItem('wf_codex_theme_name') || "GRINEER");
+            setDestination(currentDestination);
+            boot();
+        }
+        window.onscroll = () => { if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) display(); };
+    </script>
+</body>
+</html>

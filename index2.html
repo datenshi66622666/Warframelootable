@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Codex Tenno - Neon Protocol</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap');
+        
+        :root { 
+            --bg: #000000; 
+            --dynamic-color: #d4af37; 
+            --glow: rgba(212, 175, 55, 0.7);
+            --prime-gold: #ffdf00;
+        }
+
+        body { 
+            background-color: var(--bg); color: #ffffff; font-family: 'Inter', sans-serif; 
+            margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh;
+            background-image: radial-gradient(circle at 15% 25%, var(--glow) 0%, transparent 35%), 
+                              radial-gradient(circle at 85% 75%, var(--glow) 0%, transparent 35%);
+            background-attachment: fixed;
+        }
+
+        .container { width: 100%; max-width: 850px; position: relative; z-index: 5; }
+
+        .index-btn {
+            position: fixed; top: 20px; left: 20px; z-index: 1000;
+            background: rgba(0,0,0,0.8); border: 2.5px solid var(--dynamic-color);
+            color: var(--dynamic-color); padding: 8px 15px;
+            text-decoration: none; font-family: 'Orbitron'; font-size: 10px;
+            font-weight: bold; border-radius: 4px; box-shadow: 0 0 15px var(--glow);
+            transition: 0.3s;
+        }
+        .index-btn:hover { background: var(--dynamic-color); color: #000; }
+
+        .color-controls {
+            position: absolute; top: 0; right: 0;
+            display: flex; flex-direction: column; gap: 12px; align-items: flex-end;
+        }
+
+        .theme-btn {
+            background: rgba(0,0,0,0.8); border: 2.5px solid var(--dynamic-color);
+            color: var(--dynamic-color); padding: 8px 15px;
+            cursor: pointer; font-family: 'Orbitron'; font-size: 10px;
+            text-transform: uppercase; font-weight: bold;
+            box-shadow: 0 0 15px var(--glow); transition: 0.3s;
+            border-radius: 4px;
+        }
+
+        .picker-container {
+            width: 35px; height: 35px; 
+            border-radius: 50%; 
+            border: 2.5px solid var(--dynamic-color);
+            background: var(--dynamic-color);
+            box-shadow: 0 0 20px var(--glow);
+            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+        }
+        
+        #freePicker { 
+            cursor: pointer; border: none; 
+            width: 60px; height: 60px; 
+            transform: scale(2);
+            background: none; 
+        }
+
+        .lotus-header { text-align: center; margin-bottom: 25px; }
+        .lotus-logo { width: 80px; filter: drop-shadow(0 0 15px var(--dynamic-color)) brightness(1.3); margin-bottom: 10px; }
+        
+        h1 { font-family: 'Orbitron'; text-align: center; letter-spacing: 12px; font-size: 26px; color: #fff; text-shadow: 0 0 20px var(--dynamic-color); margin: 0; }
+
+        .dashboard { 
+            position: sticky; top: 10px; z-index: 100; background: rgba(0, 0, 0, 0.95); 
+            backdrop-filter: blur(15px); padding: 20px; border-radius: 15px; border: 2.5px solid var(--dynamic-color); 
+            margin-bottom: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
+        }
+
+        .progress-track { height: 10px; background: #111; border-radius: 5px; overflow: hidden; margin: 15px 0; border: 1px solid rgba(255,255,255,0.1); }
+        #fill { height: 100%; width: 0%; background: var(--dynamic-color); box-shadow: 0 0 25px var(--dynamic-color); transition: 0.8s; }
+
+        #search { width: 100%; box-sizing: border-box; padding: 15px; background: #000; border: 2px solid var(--dynamic-color); border-radius: 8px; color: #fff; font-family: 'Orbitron'; font-size: 12px; outline: none; }
+
+        .frame-card { display: flex; align-items: center; padding: 15px; background: rgba(10, 10, 10, 0.9); border-radius: 12px; margin-bottom: 10px; border: 2px solid var(--dynamic-color); transition: 0.3s; }
+        .frame-card:hover { transform: scale(1.02); box-shadow: 0 0 25px var(--glow); }
+
+        .checkbox-group { display: flex; gap: 12px; margin-right: 18px; }
+        .check-item { display: flex; flex-direction: column; align-items: center; font-size: 8px; font-family: 'Orbitron'; color: #666; }
+
+        .wf-icon-container { width: 60px; height: 60px; border-radius: 10px; background: #000; border: 1.5px solid var(--dynamic-color); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .wf-icon { width: 52px; height: 52px; object-fit: contain; }
+        
+        .frame-info { flex-grow: 1; margin-left: 15px; }
+        .frame-name { font-family: 'Orbitron'; font-size: 17px; font-weight: bold; color: #fff; }
+        .drop-info { color: var(--dynamic-color); font-size: 10px; text-transform: uppercase; margin-top: 4px; font-weight: bold; }
+        .faction-icon { width: 42px; height: 42px; filter: brightness(0) invert(1) drop-shadow(0 0 5px var(--dynamic-color)); }
+
+        input[type="checkbox"] { 
+            width: 60px;      
+            height: 60px;     
+            cursor: pointer;
+            accent-color: var(--dynamic-color);
+        }
+    </style>
+</head>
+<body>
+    
+    <script>
+    // Ce script s'exécute AVANT que le reste de la page ne s'affiche
+    (function() {
+        const savedColor = localStorage.getItem('wf_persistent_color');
+        if (savedColor) {
+            document.documentElement.style.setProperty('--dynamic-color', savedColor);
+            // On prépare aussi la lueur pour éviter le flash blanc/jaune
+            document.documentElement.style.setProperty('--glow', savedColor + '4d');
+        }
+    })();
+</script>
+
+    
+
+<a href="index.html" class="index-btn">< RETOUR MENU</a>
+
+<div class="container">
+    <div class="color-controls">
+        <button class="theme-btn" id="themeBtn" onclick="cycleTheme()">THEME: GRINEER</button>
+        <div class="picker-container">
+            <input type="color" id="freePicker" value="#d4af37" oninput="applyCustomColor(this.value)">
+        </div>
+    </div>
+
+    <div class="lotus-header">
+        <img src="lotus.png" class="lotus-logo" id="lotusLogo" onerror="this.src='https://wiki.warframe.com/w/Special:Redirect/file/LotusLogo64.png';">
+        <h1>CODEX</h1>
+    </div>
+
+    <div class="dashboard">
+        <div style="display:flex; justify-content:space-between; font-family:Orbitron; font-size:12px;">
+            <span>INTERFACE SYNCHRONISÉE</span>
+            <span id="counter">0 / 0</span>
+        </div>
+        <div class="progress-track"><div id="fill"></div></div>
+        <input type="text" id="search" placeholder="RECHERCHER..." onkeyup="filter()">
+    </div>
+
+    <div id="list"></div>
+</div>
+
+<script>
+    const themes = [
+        { name: "GRINEER", color: "#d4af37" }, 
+        { name: "CORPUS", color: "#00d4ff" }, 
+        { name: "INFESTÉ", color: "#00ff88" }, 
+        { name: "STALKER", color: "#ff0000" }, 
+        { name: "OROKIN", color: "#e8d080" }
+    ];
+    let themeIdx = 0;
+
+    // --- FONCTION APPLIQUER + SAUVEGARDER ---
+    function applyCustomColor(color) {
+        document.documentElement.style.setProperty('--dynamic-color', color);
+        document.documentElement.style.setProperty('--glow', color + 'b3');
+        const logo = document.getElementById('lotusLogo');
+        if(logo) logo.style.filter = `drop-shadow(0 0 15px ${color}) brightness(1.3)`;
+        
+        const pickerCont = document.querySelector('.picker-container');
+        if(pickerCont) pickerCont.style.background = color;
+        
+        document.body.style.backgroundImage = `radial-gradient(circle at 15% 25%, ${color}4d 0%, transparent 35%), radial-gradient(circle at 85% 75%, ${color}4d 0%, transparent 35%)`;
+        
+        // Sauvegarde de la couleur
+        localStorage.setItem('wf_persistent_color', color);
+    }
+
+    function cycleTheme() {
+        themeIdx = (themeIdx + 1) % themes.length;
+        const t = themes[themeIdx];
+        document.getElementById('themeBtn').innerText = "THEME: " + t.name;
+        applyCustomColor(t.color);
+        document.getElementById('freePicker').value = t.color;
+        
+        // Sauvegarde de l'index du thème
+        localStorage.setItem('wf_theme_idx', themeIdx);
+    }
+
+    const frames = [
+        ["Ash", "MISSIONS RAILJACK", "PROXIMA", true], ["Atlas", "Golem Jordas", "ERIS", true], ["Banshee", "Dojo", "LABO", true],
+        ["Baruuk", "Little Duck", "FORTUNA", true], ["Caliban", "Mises à prix", "CETUS PLAINE", true], ["Chroma", "Simaris", "RELAIS", true],
+        ["Citrine", "Défense Miroir", "MARS", false], ["Cyte-09", "HEX (Syndicat)", "1999", false], ["Dagath", "Dojo", "LABO", false],
+        ["Dante", "Loid", "DEIMOS", false], ["Ember", "Sargas Ruk", "SATURNE", true], ["Equinox", "Tyl Regor", "URANUS", true],
+        ["Excalibur", "Lech Kril", "MARS", true], ["Frost", "Kril & Vor", "CÉRÈS", true], ["Gara", "Simaris", "RELAIS", true],
+        ["Garuda", "Mises à prix", "FORTUNA", true], ["Gauss", "Perturbation", "SEDNA", true], ["Grendel", "Arbitrage", "ARBITRAGE", true],
+        ["Gyre", "Quinn", "ZARIMAN", true], ["Harrow", "MISSIONS RAILJACK", "PROXIMA", true], ["Hildryn", "Little Duck", "FORTUNA", true],
+        ["Hydroid", "Vay Hek", "TERRE", true], ["Inaros", "Simaris", "RELAIS", true], ["Ivara", "Espionnage", "SYSTÈME", true],
+        ["Jade", "Ascension", "URANUS", false], ["Khora", "Simaris", "RELAIS", true], ["Koumei", "Défense Saya", "CETUS", false],
+        ["Kullervo", "Hold", "DUVIRI", false], ["Lavos", "Père", "DEIMOS", true], ["Limbo", "Simaris", "RELAIS", true],
+        ["Loki", "Hyena", "NEPTUNE", true], ["Mag", "Le Sergent", "PHOBOS", true], ["Mesa", "Alad V", "ERIS", true],
+        ["Mirage", "Simaris", "RELAIS", true], ["Nekros", "Lephantis", "DEIMOS", true], ["Nidus", "Glast", "ERIS", true], 
+        ["Nezha", "Dojo", "LABO", true], ["Nokko", "Nightcap", "FORTUNA", false], ["Nova", "Raptors", "EUROPA", true],
+        ["Nyx", "Invasions", "SYSTÈME", true], ["Oberon", "Railjack", "PROXIMA", true], ["Octavia", "Simaris LUA", "RELAIS", true],
+        ["Protea", "Granum", "VÉNUS", true], ["Qorvex", "Loid", "DEIMOS", false], ["Revenant", "Simaris", "RELAIS", true],
+        ["Rhino", "Jackal", "VÉNUS", true], ["Saryn", "Kela", "SEDNA", true], ["Sevagoth", "TEMPÊTES DU NÉANT", "PROXIMA", true],
+        ["Styanax", "Kahl", "TERRE", false],["Temple","HEX (Syndicat)","1999",false], ["Titania", "Simaris", "RELAIS", true], ["Trinity", "Ambulas", "PLUTON", true],
+        ["Uriel", "Syndicat", "CATHÉDRALE", false], ["Valkyr", "Alad V", "JUPITER", true], ["Vauban", "ONDE NOCTURNE", "BOUTIQUE", true],
+        ["Volt", "Dojo", "LABO", true], ["Voruna", "Yonta Circulus lua", "ZARIMAN", false], ["Wisp", "Ropalolyst", "JUPITER", true],
+        ["Wukong", "Dojo", "LABO", true], ["Xaku", "Mises à prix", "DEIMOS", true], ["Yareli", "Dojo", "LABO", true], ["Zephyr", "Dojo", "LABO", true]
+    ];
+
+    let db = JSON.parse(localStorage.getItem('wf_codex_final_2026')) || {};
+
+    function getIcon(name) {
+        if (name === "Caliban") return "https://wiki.warframe.com/w/Special:Redirect/file/CalibanIcon.png";
+        if (name === "Nokko") return "https://wiki.warframe.com/images/thumb/Nokko_Thumb.png/128px-Nokko_Thumb.png";
+        if (name === "Uriel") return "https://wiki.warframe.com/images/thumb/UrielIcon272.png/128px-UrielIcon272.png";
+        if (name === "Temple") return " https://wiki.warframe.com/images/thumb/TempleIcon272.png/128px-TempleIcon272.png?9d1ab";
+        return `https://wiki.warframe.com/w/Special:Redirect/file/${name.replace(/\s+/g, '')}Icon272.png`;
+    }
+
+    function getFactionIcon(sector, name, loot) {
+        const s = sector.toUpperCase(); const n = name.toUpperCase(); const l = loot.toUpperCase();
+        if (s.includes("PROXIMA") || s.includes("RAILJACK") || l.includes("RAILJACK")) return "railjack.png";
+        if (n.includes("JADE")) return "corpus.png";
+        if (n.includes("URIEL") || s.includes("CATHÉDRALE") || n.includes("DANTE")) return "dante.png";
+        if (n.includes("VORUNA")) return "railjack.png";
+        if (n.includes("IVARA") || s.includes("SYSTÈME")) return "systeme.png";
+        if (n.includes("VAUBAN")) return "radio.png";
+        if (n.includes("Temple")) return "1999.png";
+        if (n.includes("CYTE-09")) return "1999.png";
+        if (n.includes("GRENDEL") || s.includes("ARBITRAGE")) return "arbitrage.png";
+        if (s.includes("RELAIS")) return "relais.png";
+        if (s.includes("DEIMOS") || s.includes("ERIS")) return "infeste.png";
+        if (s.includes("LABO") || s.includes("DOJO")) return "pandaahh.png";
+        if (s.includes("CETUS") || s.includes("PLAINE")) return "cetus.png";
+        if (s.includes("FORTUNA")) return "fortuna.png";
+        if (s.includes("SEDNA") || s.includes("SATURNE") || s.includes("MARS") || s.includes("URANUS") || s.includes("TERRE") || s.includes("CÉRÈS")) return "grineer.png";
+        if (s.includes("VÉNUS") || s.includes("PHOBOS") || s.includes("JUPITER") || s.includes("NEPTUNE") || s.includes("URANUS") || s.includes("EUROPA")) return "corpus.png";
+        return "orokin.png";
+    }
+
+    function draw() {
+        const list = document.getElementById('list');
+        list.innerHTML = '';
+        frames.sort((a,b) => a[0].localeCompare(b[0])).forEach(f => {
+            const [name, loot, sector, hasPrime] = f;
+            const nD = db[name + '_n'] || false; 
+            const pD = db[name + '_p'] || false;
+            
+            list.innerHTML += `
+                <div class="frame-card">
+                    <div class="checkbox-group" style="display: flex; gap: 15px; min-width: 120px; justify-content: center;">
+                        <div class="check-item" style="display: flex; flex-direction: column; align-items: center;">
+                            <span style="font-size: 0.6em; color: var(--dynamic-color);">NORM</span>
+                            <input type="checkbox" ${nD ? 'checked' : ''} onchange="toggle('${name}_n')" style="width: 50px; height: 50px; cursor: pointer;">
+                        </div>
+
+                        <div class="check-item" style="display: flex; flex-direction: column; align-items: center; ${hasPrime ? '' : 'visibility: hidden;'}">
+                            <span style="color:#ffdf00; font-size: 1.2em; text-shadow:0 0 10px gold; line-height: 1;">★</span>
+                            <input type="checkbox" ${pD ? 'checked' : ''} onchange="toggle('${name}_p')" style="accent-color:#ffdf00; width: 50px; height: 50px; cursor: pointer;">
+                        </div>
+                    </div>
+
+                    <div class="wf-icon-container"><img class="wf-icon" src="${getIcon(name)}" onerror="this.src='lotus.png';"></div>
+                    
+                    <div class="frame-info" style="flex-grow: 1; padding-left: 15px;">
+                        <div class="frame-name" style="font-family: 'Orbitron'; font-size: 1.1em; color: var(--dynamic-color);">${name.toUpperCase()}</div>
+                        <div class="drop-info" style="font-size: 0.8em; opacity: 0.8;">${loot}</div>
+                        <div class="drop-info" style="font-size: 0.7em; color: var(--dynamic-color);">${sector}</div>
+                    </div>
+
+                    <div style="text-align:right">
+<img class="faction-icon" 
+     src="${getFactionIcon(sector, name, loot)}" 
+     style="width: 100px; height: 100px; object-fit: contain; filter: drop-shadow(0 0 6px #ffffff) brightness(1.0);" onerror="this.style.display='none'">
+                   
+                    </div>
+                </div>`;
+        });
+        updateStats();
+    }
+
+
+    function toggle(k) { db[k] = !db[k]; localStorage.setItem('wf_codex_final_2026', JSON.stringify(db)); draw(); }
+    
+    function updateStats() {
+        let total = 0; frames.forEach(f => total += (f[3] ? 2 : 1));
+        const count = Object.values(db).filter(v => v).length;
+        document.getElementById('counter').innerText = `${count} / ${total}`;
+        const fill = document.getElementById('fill');
+        if (fill) fill.style.width = (count / total * 100) + '%';
+    }
+
+    function filter() {
+        const q = document.getElementById('search').value.toLowerCase();
+        document.querySelectorAll('.frame-card').forEach(card => card.style.display = card.innerText.toLowerCase().includes(q) ? 'flex' : 'none');
+    }
+
+    // --- CHARGEMENT AU DÉMARRAGE ---
+    window.onload = function() {
+        const savedColor = localStorage.getItem('wf_persistent_color');
+        const savedIdx = localStorage.getItem('wf_theme_idx');
+
+        if (savedIdx !== null) {
+            themeIdx = parseInt(savedIdx);
+            document.getElementById('themeBtn').innerText = "THEME: " + themes[themeIdx].name;
+        }
+        if (savedColor) {
+            applyCustomColor(savedColor);
+            document.getElementById('freePicker').value = savedColor;
+        } else {
+            applyCustomColor("#d4af37"); // Défaut Orokin
+        }
+        draw(); 
+    };
+</script>
+
+</body>
+</html>

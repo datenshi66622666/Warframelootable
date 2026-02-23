@@ -1,0 +1,54 @@
+function updateStats(json) {
+    try {
+        var data = JSON.parse(json);
+        lastJson = data; // On garde en mémoire pour changer de filtre sans recharger
+        
+        // On nettoie les anciens compteurs pour économiser la batterie
+        intervals.forEach(clearInterval);
+        intervals = [];
+        
+        var box = document.getElementById('main-box');
+        var html = "";
+
+        // --- FILTRE CYCLES ---
+        if(currentFilter === 'cycles') {
+            // ... (ton code pour Cetus, Vallis, Deimos)
+        }
+
+        // --- FILTRE FISSURES ---
+        else if(currentFilter === 'fissures' && data.fissures) {
+            // ... (ton code avec style Steel Path)
+        }
+
+        // --- FILTRE INVASIONS (Le nouveau !) ---
+        else if(currentFilter === 'invasions' && data.invasions) {
+            data.invasions.forEach(inv => {
+                if(!inv.completed) {
+                    var nodeFr = inv.node;
+                    for(var eng in trans) { if(nodeFr.includes(eng)) nodeFr = nodeFr.replace(eng, trans[eng]); }
+                    
+                    html += `<div class="row" style="flex-wrap:wrap">
+                        <span class="label">${nodeFr}</span>
+                        <span class="status" style="color:var(--accent)">${Math.floor(inv.completion)}%</span>
+                        <div class="node-info">${inv.attackerReward.itemString || "???"} VS ${inv.defenderReward.itemString || "???"}</div>
+                    </div>`;
+                }
+            });
+            box.innerHTML = html || "Paix dans le système.";
+        }
+
+        // --- FILTRE ALERTES (Le nouveau !) ---
+        else if(currentFilter === 'alerts' && data.alerts) {
+            data.alerts.forEach((al, i) => {
+                html += `<div class="row" style="flex-wrap:wrap">
+                    <span class="status steel">ALERTE</span>
+                    <span class="timer" id="a${i}"></span>
+                    <div class="node-info">${al.mission.reward.asString} — ${trans[al.mission.type] || al.mission.type}</div>
+                </div>`;
+            });
+            box.innerHTML = html || "Aucune alerte spéciale.";
+            data.alerts.forEach((al, i) => { startTicker('a'+i, al.expiry); });
+        }
+
+    } catch(e) { console.error("Erreur JSON : ", e); }
+}

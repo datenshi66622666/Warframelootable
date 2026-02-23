@@ -1,0 +1,1304 @@
+    <!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+    
+    .back-btn {
+    text-decoration: none;
+    color: var(--accent);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8em;
+    font-weight: bold;
+    padding: 10px 20px;
+    background: var(--glass);
+    border: 1px solid var(--accent);
+    border-radius: 5px;
+    transition: 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.back-btn:hover {
+    background: var(--accent);
+    color: #000;
+    box-shadow: 0 0 15px var(--accent);
+    transform: scale(1.05);
+}
+
+    
+        
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap');
+        :root { --bg: #000000; --accent: #d4af37; --glow: rgba(212, 175, 55, 0.4); --glass: rgba(255, 255, 255, 0.05); }
+        body { background-color: var(--bg); color: #ffffff; font-family: 'Inter', sans-serif; margin: 0; padding: 15px; min-height: 100vh; background-image: radial-gradient(circle at 15% 25%, var(--glow) 0%, transparent 35%), radial-gradient(circle at 85% 75%, var(--glow) 0%, transparent 35%); background-attachment: fixed; }
+        .color-controls { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .theme-btn { background: var(--glass); backdrop-filter: blur(5px); color: white; border: 1px solid var(--accent); padding: 8px 15px; border-radius: 5px; font-family: 'Orbitron'; font-size: 0.7em; cursor: pointer; transition: 0.3s; box-shadow: 0 0 10px var(--glow); text-transform: uppercase; }
+        .picker-wrapper { width: 34px; height: 34px; border-radius: 50%; border: 2px solid #fff; position: relative; cursor: pointer; box-shadow: 0 0 15px var(--accent); background-color: var(--accent); flex-shrink: 0; }
+        #freePicker { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; top:0; left:0; z-index: 10; }
+        .orbiteur-nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .nav-btn { background: var(--accent); color: #000; border: none; padding: 12px; border-radius: 5px; font-family: 'Orbitron'; font-size: 0.65em; font-weight: bold; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 15px var(--glow); }
+        .section-title { font-family: 'Orbitron'; color: var(--accent); font-size: 0.8em; letter-spacing: 2px; margin: 20px 0 10px 5px; text-transform: uppercase; }
+.card { 
+    background: rgba(0, 0, 0, 0.5); /* Plus sombre pour faire ressortir le flou */
+    backdrop-filter: blur(15px) saturate(160%); /* Flou plus fort style Orbiteur */
+    -webkit-backdrop-filter: blur(15px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 12px; 
+    padding: 18px; 
+    margin-bottom: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* On ajoute du style aux titres traduits à l'intérieur */
+.card h3 {
+    margin: 0 0 10px 0;
+    color: var(--accent); /* Ta couleur (Or, Bleu, etc.) */
+    font-weight: 900;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    font-size: 1.1rem;
+}
+
+/* Style pour les noms d'items traduits */
+.item-row span {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .timer { font-family: 'Orbitron'; color: var(--accent); font-weight: bold; font-size: 0.85em; white-space: nowrap; }
+        .status { font-size: 0.8em; font-weight: bold; text-transform: uppercase; font-family: 'Orbitron'; }
+        .steel { color: #ff3333 !important; text-shadow: 0 0 10px rgba(255,0,0,0.6); }
+        .node-info { font-size: 0.75em; color: rgba(255,255,255,0.5); width: 100%; margin-top: 4px; }
+        .sub-nav { display: flex; gap: 5px; margin-bottom: 15px; overflow-x: auto; }
+        .sub-btn { background: rgba(255, 255, 255, 0.1); color: #aaa; border: 1px solid rgba(255, 255, 255, 0.2); padding: 6px 12px; border-radius: 4px; font-family: 'Orbitron'; font-size: 0.6em; cursor: pointer; white-space: nowrap; }
+        .sub-btn.active { background: var(--accent); color: #000; }
+        .inv-meta { display: flex; justify-content: space-between; font-size: 0.65em; margin-top: 8px; font-family: 'Orbitron'; color: var(--accent); }
+        .prog-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); margin-top: 4px; border-radius: 3px; overflow: hidden; }
+        .prog-fill { height: 100%; background: var(--accent); box-shadow: 0 0 8px var(--accent); transition: 0.5s; }
+   
+   
+/* Conteneur principal style Fenêtre Windows 95 */
+.window-1999 {
+    background: #c0c0c0 !important; /* Gris classique */
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff !important; /* Effet relief */
+    padding: 2px !important;
+    color: #000000 !important;
+    font-family: 'Courier New', Courier, monospace !important;
+}
+
+/* Barre de titre de la fenêtre */
+.window-header {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: white;
+    padding: 3px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 0.8em;
+    margin-bottom: 5px;
+}
+
+/* Les cartes de jours (style enfoncé) */
+.day-slot {
+    background: #ffffff;
+    border: 2px solid;
+    border-color: #808080 #ffffff #ffffff #808080; /* Effet enfoncé */
+    margin-bottom: 8px;
+    padding: 8px;
+}
+
+.window-1999 { background: #c0c0c0 !important; color: #000 !important; font-family: monospace !important; padding: 15px !important; }
+.window-header { background: #000080; color: white; padding: 4px; display: flex; justify-content: space-between; margin-bottom: 10px; }
+.day-slot { background: #d9d9d9; border: 2px inset #fff; padding: 10px; margin-bottom: 10px; box-shadow: 2px 2px 0 #000; }
+.todo-title { color: #c0392b; font-weight: bold; font-size: 0.9em; }
+.reward-text { color: #000080; font-weight: bold; }
+
+   
+   
+   
+   
+   
+   
+/* Style de base des boutons (Mode Lune par défaut) */
+.nav-btn { 
+    background: rgba(0, 0, 0, 0.6) !important; /* Fond noir transparent */
+    color: var(--accent) !important; /* Texte en couleur (jaune, bleu, etc.) */
+    border: 1px solid var(--accent) !important; /* Bordure fine */
+    padding: 12px; 
+    border-radius: 5px; 
+    font-family: 'Orbitron'; 
+    font-size: 0.65em; 
+    font-weight: bold; 
+    cursor: pointer; 
+    text-transform: uppercase; 
+    box-shadow: 0 0 5px var(--glow); 
+    transition: 0.3s;
+}
+
+/* Effet quand on passe la souris ou clic */
+.nav-btn:active {
+    background: var(--accent) !important;
+    color: #000 !important;
+}
+/* Mode Soleil : On remonte la luminosité du thème */
+[data-theme="light"] body {
+    background: radial-gradient(circle at 50% 40%, rgba(212, 175, 55, 0.4) 0%, #1a1a1a 100%) no-repeat fixed;
+    background-color: #1a1a1a;
+}
+
+/* Les cartes : plus transparentes en mode nuit pour voir le fond */
+.card {
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    transition: 0.5s;
+}
+
+[data-theme="light"] .card {
+    background: rgba(20, 20, 20, 0.8) !important;
+    border: 1px solid var(--accent);
+}
+   
+   
+   /* Par défaut, tout est normal */
+html {
+    transition: filter 0.5s ease; /* Transition douce pour les yeux */
+}
+
+/* Quand on active la lune, on assombrit TOUT le site d'un coup */
+/* Ton orange Grineer restera orange, mais un orange très sombre */
+[data-theme="dark-mode"] {
+    filter: brightness(0.6) contrast(1.1);
+}
+
+/* On empêche le bouton et le sélecteur d'être assombris pour qu'ils restent visibles */
+#dayNightBtn, .picker-container {
+    filter: brightness(1.5);
+}
+
+   
+   
+   /* Par défaut, on ne change rien */
+html {
+    transition: filter 0.5s ease-in-out;
+}
+
+/* Quand la lune est active, on baisse la luminosité et on augmente un peu le contraste pour que ce soit "plus joli" */
+[data-theme="dark"] {
+    filter: brightness(0.7) contrast(1.1);
+}
+
+/* On s'assure que le bouton lune/soleil et le picker de couleur ne soient pas affectés par le filtre pour qu'ils restent clairs */
+#dayNightBtn, .picker-container {
+    filter: brightness(1.2);
+}
+
+   
+   
+   
+   
+   
+   
+   
+   
+    </style>
+</head>
+<body>
+    
+<div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px;">
+    <a href="index.html" class="back-btn" style="width: 200px; text-align: center;">
+       ← MENU PRINCIPAL
+    </a>
+
+    <button onclick="togglePhoto()" class="back-btn" style="width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; padding: 0; cursor: pointer;">
+        <img src="pandaahh.png" style="width: 60px; height: 60px; filter: drop-shadow(0 0 5px var(--accent));" onerror="this.src='https://cdn-icons-png.flaticon.com/512/833/833453.png'">
+    </button>
+</div>
+
+
+
+
+
+
+
+
+
+<div id="photoOverlay" onclick="togglePhoto()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center; cursor:pointer;">
+    <img src="pandaahh1.png" style="max-width:90%; max-height:90%; border:2px solid var(--accent); box-shadow: 0 0 30px var(--glow); border-radius: 5px;">
+    <div style="position:absolute; bottom:30px; color:var(--accent); font-family:'Orbitron'; font-size:0.7em; letter-spacing:2px;">CLIQUEZ POUR FERMER</div>
+</div>
+
+    
+    <div class="color-controls">
+        <button class="theme-btn" id="themeBtn" onclick="cycleTheme()">THEME: GRINEER</button>
+        <div class="picker-wrapper" id="visualPicker">
+            <input type="color" id="freePicker" oninput="applyCustomColor(this.value)">
+        </div>
+    </div>
+    <div class="orbiteur-nav">
+        <button class="nav-btn" onclick="setFilter('fissures')">FISSURES</button>
+        <button class="nav-btn" onclick="setFilter('cycles')">CYCLES</button>
+        <button class="nav-btn" onclick="setFilter('alerts')">ALERTES</button>
+        <button class="nav-btn" onclick="setFilter('syndicate'); setSubFilter('cetus')">SYNDICAT</button>
+        <button class="nav-btn" onclick="setFilter('archon_hunt'); setSubFilter('archon')">CHASSE ARCHONTE</button>
+        <button class="nav-btn" onclick="setFilter('archimedea'); setSubFilter('standard')">ARCHIMÉDÉE</button>
+        <button id="btn-1999" class="nav-btn" onclick="setFilter('calendar1999')">
+ CALENDRIER 1999
+        <button class="nav-btn" onclick="setFilter('construction')">CONSTRUCTION</button>
+        <button class="nav-btn" onclick="setFilter('circuit'); setSubFilter('normal')">LE CIRCUIT</button>
+
+
+
+
+
+
+
+
+</button>
+
+
+</button>
+
+  
+  
+    </div>
+    <div id="content">
+        <div class="section-title" id="view-title">CYCLES</div>
+        <div class="card" id="main-box">Initialisation...</div>
+    </div>
+
+    <script>
+        const themes = [
+            {n:"GRINEER",c:"#d4af37"},
+            {n:"CORPUS",c:"#00d4ff"},
+            {n:"INFESTÉ",c:"#00ff88"},
+            {n:"STALKER",c:"#ff0000"},
+            {n:"OROKIN",c:"#e8d080"}
+        ];
+        let themeIdx = 0, currentFilter = 'cycles', currentSubFilter = 'general', lastJson = null, intervals = [];
+
+        function applyCustomColor(hex) { 
+            document.documentElement.style.setProperty('--accent', hex); 
+            document.documentElement.style.setProperty('--glow', hex+'66');
+            document.getElementById('visualPicker').style.backgroundColor = hex;
+            localStorage.setItem('wf_grineer_save', hex); 
+        }
+
+        function cycleTheme() { 
+            themeIdx = (themeIdx + 1) % themes.length; 
+            applyCustomColor(themes[themeIdx].c);
+            document.getElementById('themeBtn').innerText = "THEME: " + themes[themeIdx].n;
+        }
+
+        function setFilter(f) { currentFilter = f; document.getElementById('view-title').innerText = f.toUpperCase(); render(); }
+        function setSubFilter(sf) { currentSubFilter = sf; render(); }
+
+        function startTicker(id, expiry) {
+            const el = document.getElementById(id); if(!el || !expiry) return;
+            const up = () => {
+                const diff = new Date(expiry).getTime() - new Date().getTime();
+                if(diff <= 0) { el.innerHTML = "00m 00s"; return; }
+                const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+                el.innerHTML = (h > 0 ? h + 'h ' : '') + (m < 10 ? '0' + m : m) + 'm ' + (s < 10 ? '0' + s : s) + 's';
+            };
+            up(); intervals.push(setInterval(up, 1000));
+        }
+
+        function render() {
+            if(!lastJson) return;
+            intervals.forEach(clearInterval); intervals = [];
+            let html = "", box = document.getElementById('main-box');
+            
+            
+
+            if(currentFilter === 'cycles') {
+    // 1. Petit traducteur et dictionnaire de couleurs pour Duviri
+    const duviriData = {
+        "joy": {n: "JOIE", c: "#00ff88"},     // Vert
+        "anger": {n: "COLÈRE", c: "#ff4444"},  // Rouge
+        "envy": {n: "ENVIE", c: "#d4af37"},    // Doré
+        "sorrow": {n: "TRISTESSE", c: "#00d4ff"}, // Bleu
+        "fear": {n: "PEUR", c: "#8844ff"}      // Violet
+    };
+
+    const dState = (lastJson.duviriCycle?.state || "N/A").toLowerCase();
+    const dInfo = duviriData[dState] || {n: dState.toUpperCase(), c: "var(--accent)"};
+
+    // 2. Configuration des cycles avec leurs couleurs
+    const c = [
+        {l:"CETUS", s:lastJson.cetusCycle?.isDay?"JOUR":"NUIT", e:lastJson.cetusCycle?.expiry, color: lastJson.cetusCycle?.isDay?"#ffcc00":"#4466ff"},
+        {l:"VALLIS", s:lastJson.vallisCycle?.isWarm?"CHAUD":"FROID", e:lastJson.vallisCycle?.expiry, color: lastJson.vallisCycle?.isWarm?"#ff6600":"#00d4ff"},
+        {l:"DEIMOS", s:(lastJson.cambionCycle?.active||"VOME").toUpperCase(), e:lastJson.cambionCycle?.expiry, color: (lastJson.cambionCycle?.active==="vome")?"#00d4ff":"#ff4444"},
+        {l:"DUVIRI", s:dInfo.n, e:lastJson.duviriCycle?.expiry, color: dInfo.c},
+        {l:"ZARIMAN", s:(lastJson.zarimanCycle?.state||"N/A").toUpperCase(), e:lastJson.zarimanCycle?.expiry, color: "#e8d080"}
+    ];
+
+    c.forEach((item, i) => {
+        html += `
+            <div class="row" style="border-left: 3px solid ${item.color}; padding-left: 15px; margin-bottom: 5px; background: rgba(255,255,255,0.02);">
+                <span style="font-family:'Orbitron'; font-size:0.8em;">${item.l}</span>
+                <span class="status" style="color:${item.color}; text-shadow: 0 0 10px ${item.color}66;">${item.s}</span>
+                <span class="timer" id="t${i}"></span>
+            </div>`;
+    });
+    
+    box.innerHTML = html;
+    c.forEach((item, i) => startTicker('t'+i, item.e));
+}
+
+
+else if(currentFilter === 'alerts') {
+    html = `<div class="sub-nav">
+        <button class="sub-btn ${currentSubFilter==='general'?'active':''}" onclick="setSubFilter('general')">ALERTE</button>
+        <button class="sub-btn ${currentSubFilter==='sortie'?'active':''}" onclick="setSubFilter('sortie')">SORTIE</button>
+        <button class="sub-btn ${currentSubFilter==='invasion'?'active':''}" onclick="setSubFilter('invasion')">INVASION</button>
+        <button class="sub-btn ${currentSubFilter==='baro'?'active':''}" onclick="setSubFilter('baro')">BARO</button>
+        <button class="sub-btn ${currentSubFilter==='nightwave'?'active':''}" onclick="setSubFilter('nightwave')">NIGHTWAVE</button>
+        <button class="sub-btn ${currentSubFilter==='resurgence'?'active':''}" onclick="setSubFilter('resurgence')">RÉSURGENCE VARZIA</button>
+
+
+
+    </div>`;
+    let inner = "";
+    
+    if(currentSubFilter === 'general') {
+        (lastJson.alerts || []).forEach((al, i) => {
+            const items = al.mission.reward.items.join(', ');
+            const credits = al.mission.reward.credits;
+            const cadeauComplet = `${items} + ${credits}cr`;
+
+            inner += `<div class="row" style="flex-direction:column; align-items:flex-start; border-bottom:1px solid rgba(255,255,255,0.05); padding: 12px 0;">
+                <div style="display:flex; width:100%; justify-content:space-between;">
+                    <span class="status" style="color:white; font-size:0.9em;">${al.mission.type}</span>
+                    <span class="timer" id="al${i}"></span>
+                </div>
+                <div style="color:var(--accent); font-family:'Orbitron'; font-size:0.8em; margin: 4px 0; font-weight:bold;">
+                    🎁 RECOMPENSE : ${cadeauComplet}
+                </div>
+                <div class="node-info" style="color:#aaa;">
+                    ${al.mission.node} | Level ${al.mission.minEnemyLevel}-${al.mission.maxEnemyLevel}
+                </div>
+            </div>`;
+            startTicker('al'+i, al.expiry);
+        });
+    }
+    else if(currentSubFilter === 'sortie' && lastJson.sortie) {
+        inner += `<div class="status" style="color:#ff4444; margin-bottom:5px;">BOSS: ${lastJson.sortie.boss}</div>`;
+        lastJson.sortie.variants.forEach(v => {
+            inner += `<div class="row" style="flex-direction:column; align-items:flex-start;"><span class="status" style="color:var(--accent)">${v.missionType}</span><div class="node-info">${v.node} | ${v.modifier}</div></div>`;
+        });
+        inner += `<div style="text-align:center; margin-top:10px;"><span class="timer" id="stie"></span></div>`;
+        startTicker('stie', lastJson.sortie.expiry);
+    }
+    else if(currentSubFilter === 'invasion' && lastJson.invasions) {
+        lastJson.invasions.forEach((inv, i) => {
+            if(!inv.completed) {
+                let rewardAtt = "Crédits";
+                let rewardDef = "Crédits";
+
+                if (inv.attacker && inv.attacker.reward && inv.attacker.reward.countedItems && inv.attacker.reward.countedItems.length > 0) {
+                    const item = inv.attacker.reward.countedItems[0];
+                    rewardAtt = `${item.count}x ${item.type}`;
+                }
+
+                if (inv.defender && inv.defender.reward && inv.defender.reward.countedItems && inv.defender.reward.countedItems.length > 0) {
+                    const item = inv.defender.reward.countedItems[0];
+                    rewardDef = `${item.count}x ${item.type}`;
+                }
+                
+                const percent = Math.round(inv.completion || 0);
+
+                inner += `
+                    <div class="row" style="flex-direction:column; align-items:flex-start; border-bottom:1px solid rgba(255,255,255,0.1); padding: 12px 0;">
+                        <div style="font-weight:bold; font-size:0.85em; color:white; margin-bottom:8px;">
+                            ${inv.node} • <span style="color:#aaa; font-weight:normal;">${inv.desc}</span>
+                        </div>
+                        
+                        <div style="display:flex; width:100%; justify-content:space-between; gap:10px; margin-bottom:10px;">
+                            <div style="flex:1; border-left:3px solid #ff4444; padding-left:8px;">
+                                <div style="font-size:0.65em; color:#ff4444; font-weight:bold; text-transform:uppercase;">${inv.attacker.faction}</div>
+                                <div style="font-size:0.75em; color:#eee;">${rewardAtt}</div>
+                            </div>
+
+                            <div style="flex:1; border-right:3px solid #0088ff; padding-right:8px; text-align:right;">
+                                <div style="font-size:0.65em; color:#0088ff; font-weight:bold; text-transform:uppercase;">${inv.defender.faction}</div>
+                                <div style="font-size:0.75em; color:#eee;">${rewardDef}</div>
+                            </div>
+                        </div>
+
+                        <div style="width:100%; height:16px; background:#111; border-radius:8px; position:relative; overflow:hidden; border:1px solid #333;">
+                            <div style="width:${percent}%; height:100%; background:linear-gradient(90deg, #ff4444, #0088ff); transition: width 0.3s;"></div>
+                            <div style="position:absolute; width:100%; top:0; left:0; text-align:center; font-size:0.7em; line-height:16px; color:white; font-weight:bold; text-shadow: 1px 1px 2px black;">
+                                ${percent}%
+                            </div>
+                        </div>
+                    </div>`;
+            }
+        });
+    }
+    
+    if (currentSubFilter === 'resurgence') {
+    const vaultData = lastJson.vaultTrader;
+    
+    if (vaultData && vaultData.inventory) {
+        const inventory = vaultData.inventory;
+
+        html += `
+            <div style="padding: 20px 15px; text-align: center; border-bottom: 2px solid var(--accent); margin-bottom: 20px; background: linear-gradient(to bottom, var(--glow), transparent);">
+                <h2 style="font-family:'Orbitron'; color: var(--accent); margin:0; letter-spacing:4px; text-shadow: 0 0 15px var(--accent), 0 0 30px var(--glow); font-size: 1.4em;">RÉSURGENCE PRIME</h2>
+                <div style="color: #fff; font-size:0.75em; margin-top:8px; font-family:'Orbitron'; opacity: 0.8; letter-spacing: 2px;">BAZAR DE MAROO • MARS</div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; align-items: center; padding: 10px;">
+                <div style="background: rgba(0,0,0,0.6); border: 2px solid var(--accent); border-radius: 15px; padding: 25px; width: 90%; text-align: center; margin-bottom: 25px; box-shadow: 0 0 20px var(--glow), inset 0 0 15px var(--glow);">
+                    <div style="color: #eee; font-size: 0.7em; margin-bottom: 10px; font-family:'Orbitron'; letter-spacing: 2px; opacity: 0.9;">FIN DE LA ROTATION DANS</div>
+                    <div id="vz_timer" style="font-family:'Orbitron'; font-size: 2em; color: var(--accent); font-weight: bold; text-shadow: 0 0 10px var(--accent);">--D --H --M --S</div>
+                </div>
+
+                <div style="width: 100%; padding: 0 5px;">`;
+
+        // Filtrage des Warframes et cosmétiques Prime
+        let primesAAfficher = new Set();
+        inventory.forEach(entry => {
+            let brut = entry.item || "";
+            // On cible les Packs et les Suits comme sur ton screen
+            if (brut.includes("Prime") && (brut.includes("Pack") || brut.includes("Suit") || brut.includes("Bobble"))) {
+                let nom = brut
+                    .replace("M P V ", "")
+                    .replace("Dual Pack", "")
+                    .replace("Single Pack", "")
+                    .replace("Prime", "")
+                    .replace("Bobble Head", "FIGURINE")
+                    .trim();
+                
+                if (nom !== "") {
+                    primesAAfficher.add(nom.toUpperCase());
+                }
+            }
+        });
+
+        // Affichage avec style "Orbiteur"
+        primesAAfficher.forEach(nom => {
+            html += `
+                <div class="row" style="background: linear-gradient(90deg, var(--glow) 0%, rgba(0,0,0,0.3) 100%); border-left: 6px solid var(--accent); margin-bottom:12px; padding:18px; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 1.4em; filter: drop-shadow(0 0 5px var(--accent));">💎</span>
+                        <div style="color:#fff; font-weight:bold; font-size:1em; letter-spacing:1px; font-family:'Orbitron';">
+                            ${nom} <span style="color: var(--accent); font-size: 0.9em; margin-left:5px;">PRIME</span>
+                        </div>
+                    </div>
+                </div>`;
+        });
+
+        if (primesAAfficher.size === 0) {
+            html += `<div style="color:#666; text-align:center; padding:20px; font-family:'Orbitron';">CHARGEMENT DES ARCHIVES...</div>`;
+        }
+
+        html += `</div></div>`;
+        box.innerHTML = html;
+
+        // Activation du timer doré
+        setTimeout(() => {
+            if (typeof startTicker === 'function') {
+                startTicker('vz_timer', vaultData.expiry);
+            }
+        }, 100);
+        return; 
+    }
+}
+
+    
+
+
+    else if(currentSubFilter === 'nightwave' && lastJson.nightwave) {
+        const nw = lastJson.nightwave;
+        inner = `<div class="status" style="color:#ff00ff; text-align:center; margin-bottom:10px;">ONDES NOCTURNES : PALIER ${nw.phase}</div>`;
+        
+        nw.activeChallenges.forEach((task, i) => {
+            const taskColor = task.isElite ? '#ff4444' : 'var(--accent)';
+            inner += `
+                <div class="row" style="flex-direction:column; align-items:flex-start; padding: 10px 0;">
+                    <div style="display:flex; width:100%; justify-content:space-between;">
+                        <span style="font-weight:bold; color:${taskColor}; font-size:0.7em; font-family:'Orbitron';">
+                            ${task.isElite ? 'ÉLITE' : 'HEBDO'}
+                        </span>
+                        <span class="timer" id="nw${i}"></span>
+                    </div>
+                    <div style="font-weight:bold; font-size:0.85em; color:#eee; margin-top:5px;">${task.title}</div>
+                    <div class="node-info" style="margin-top:2px;">${task.desc}</div>
+                    <div style="color:#00ff88; font-size:0.65em; font-weight:bold; margin-top:5px;">+${task.reputation} RÉPUTATION</div>
+                </div>`;
+            
+            // On lance le timer immédiatement pour chaque défi
+            setTimeout(() => startTicker('nw'+i, task.expiry), 50);
+        });
+    }
+
+
+
+
+    
+else if (currentSubFilter === 'baro' && lastJson.voidTrader) {
+    const b = lastJson.voidTrader;
+    
+    // CALCULER si Baro est présent
+    const now = new Date().getTime();
+    const activationTime = new Date(b.activation).getTime();
+    const expiryTime = new Date(b.expiry).getTime();
+    const isPresent = now >= activationTime && now < expiryTime;
+
+    let statusMsg = isPresent ? b.location : "EN TRANSIT DANS LE NÉANT";
+    let timerLabel = isPresent ? "PART DANS :" : "ARRIVE DANS :";
+    let targetDate = isPresent ? b.expiry : b.activation;
+
+    inner = `
+        <div style="text-align:center; padding:15px;">
+            <div style="color:${isPresent ? '#00d4ff' : '#d4af37'}; font-family:'Orbitron'; font-size:1em;">${b.character.toUpperCase()}</div>
+            <div style="font-size:0.7em; color:#aaa; margin-top:5px; text-transform: uppercase;">${statusMsg}</div>
+            
+            <div style="margin-top:15px;">
+                <div style="font-size:0.6em; color:#666; margin-bottom:5px;">${timerLabel}</div>
+                <div class="timer" id="baroTimer" style="font-size:1.2em; color:#fff;"></div>
+            </div>
+        </div>`;
+
+    if (isPresent && b.inventory && b.inventory.length > 0) {
+        inner += `<div style="margin-top:10px; border-top:1px solid #333;">`;
+        inner += `<div style="text-align:center; color:#d4af37; font-weight:bold; padding:10px; font-size:0.8em;">📦 INVENTAIRE (${b.inventory.length} ARTICLES)</div>`;
+        
+        b.inventory.forEach(item => {
+            // Traduction automatique basique
+            let nomTraduit = item.item
+                .replace(/Primed/g, 'Prime')
+                .replace(/Prisma/g, 'Prisma')
+                .replace(/Vandal/g, 'Vandal')
+                .replace(/Wraith/g, 'Wraith')
+                .replace(/Blueprint/g, 'Plan')
+                .replace(/Skin/g, 'Apparence')
+                .replace(/Syandana/g, 'Syandana')
+                .replace(/Armor/g, 'Armure')
+                .replace(/Sigil/g, 'Sigle')
+                .replace(/Ephemera/g, 'Éphémère')
+                .replace(/Domestik Drone/g, 'Drone Domestique')
+                .replace(/Gene-masking Kit/g, 'Kit Masquage Génétique')
+                .replace(/Treasure Box/g, 'Coffre au Trésor')
+                .replace(/Relic/g, 'Relique')
+                .replace(/Intact/g, 'Intacte')
+                .replace(/Pistol/g, 'Pistolet')
+                .replace(/Ammo Mutation/g, 'Mutation Munitions')
+                .replace(/Chest Plate/g, 'Plastron')
+                .replace(/Shoulder Plate/g, 'Épaulière')
+                .replace(/Ankle Plate/g, 'Jambière')
+                .replace(/Shotgun/g, 'Fusil à Pompe')
+                .replace(/Rifle/g, 'Fusil')
+                .replace(/Melee/g, 'Mêlée')
+                .replace(/Scene/g, 'Scène')
+                .replace(/Deco/g, 'Déco')
+                .replace(/Mask/g, 'Masque')
+                .replace(/Sentinel/g, 'Sentinelle')
+                .replace(/Immortal/g, 'Immortelle')
+                .replace(/Dual Cleavers/g, 'Doubles Couperets')
+                .replace(/Tower/g, 'Tour')
+                .replace(/Extraction/g, 'Extraction')
+                .replace(/Spear/g, 'Lance')
+                .replace(/Cult/g, 'Culte')
+                .replace(/Path/g, 'Sentier')
+                .replace(/Vines/g, 'Vignes')
+                .replace(/Lotus/g, 'Lotus')
+                .replace(/Orokin/g, 'Orokin')
+                .replace(/Sands Of/g, 'Sables de')
+                .replace(/Fae/g, 'Féerique');
+            
+            inner += `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #222;">
+                    <div style="font-size:0.75em; color:#eee; flex:1; padding-right:10px;">${nomTraduit}</div>
+                    <div style="text-align:right;">
+                        <div style="color:#d4af37; font-size:0.8em; font-weight:bold;">${item.ducats} <small>Ducats</small></div>
+                        <div style="color:#00d4ff; font-size:0.7em;">${item.credits.toLocaleString('fr-FR')} <small>Crédits</small></div>
+                    </div>
+                </div>`;
+        });
+        inner += `</div>`;
+    } else if (!isPresent) {
+        inner += `<div style="text-align:center; padding:30px; color:#666; font-size:0.8em;">L'inventaire apparaîtra lors de son arrivée.</div>`;
+    }
+}
+
+box.innerHTML = html + (inner || "");
+
+// ⚠️ IMPORTANT : DÉMARRER LE TIMER BARO APRÈS L'INJECTION HTML
+if(currentSubFilter === 'baro' && lastJson.voidTrader) {
+    const b = lastJson.voidTrader;
+    const now = new Date().getTime();
+    const activationTime = new Date(b.activation).getTime();
+    const expiryTime = new Date(b.expiry).getTime();
+    const isPresent = now >= activationTime && now < expiryTime;
+    const targetDate = isPresent ? b.expiry : b.activation;
+    
+    setTimeout(() => startTicker('baroTimer', targetDate), 50);
+    }
+
+    
+    }
+
+     
+    
+         else if (currentFilter === 'archimedea') {
+    // 1. Barre de navigation (Inversion : Standard -> 1999 / 1999 -> Murmures)
+    html = `
+    <div class="sub-nav">
+        <button class="sub-btn ${currentSubFilter === '1999' ? 'active' : ''}" onclick="setSubFilter('1999')">HÖLLVANIA (1999)</button>
+        <button class="sub-btn ${currentSubFilter === 'standard' ? 'active' : ''}" onclick="setSubFilter('standard')">MURMURES D'ENTRATI</button>
+    </div>`;
+
+    const dataArchi = lastJson.archimedeas;
+    
+    if (dataArchi && Array.isArray(dataArchi)) {
+        // --- LOGIQUE D'INVERSION ---
+        // 'standard' cherche le labo 1999 ("C T_ L A B")
+        // '1999' cherche le reste (Archimédée classique)
+        const selection = (currentSubFilter === 'standard') 
+            ? dataArchi.find(a => a.type === "C T_ L A B")
+            : dataArchi.find(a => a.type !== "C T_ L A B");
+
+        if (selection && selection.missions) {
+            html += `<div class="card" style="border-top: 2px solid var(--accent); margin-top:10px; padding:15px;">`;
+            
+            // Timer de fin de cycle
+            html += `
+                <div style="text-align:center; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+                    <span class="timer" id="archi_timer_final" style="font-family:'Orbitron'; font-size:1.1em; color:var(--accent); font-weight:bold;"></span>
+                </div>`;
+
+            // Liste des 3 missions
+            selection.missions.forEach((m, i) => {
+    // 1. On récupère la couleur selon la faction
+    let colorFaction = "#00ff88"; // Vert par défaut
+    if (m.factionKey === "Man in the Wall") {
+        colorFaction = localStorage.getItem('wf_grineer_save') || "#ffb400";
+    }
+
+    // 2. On génère le HTML proprement
+    html += `
+    <div class="row" style="flex-direction:column; align-items:flex-start; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex; width:100%; justify-content:space-between; align-items:center;">
+            <span style="font-family:'Orbitron'; font-size:0.75em; color:var(--accent);">MISSION ${i + 1}</span>
+            <span style="font-size:0.8em; color:${colorFaction}; font-family:'Orbitron'; font-weight:bold;">
+                ${traduire(m.faction || "INCONNU").toUpperCase()}
+            </span>
+        </div>
+
+        <div style="font-weight:bold; font-size:1.1em; color:#eee; margin-top:5px; text-transform:uppercase;">
+            ${traduire(m.missionType || "MISSION")}
+        </div>
+
+        <div style="color:${colorFaction}; font-size:0.85em; font-weight:bold; margin-top:8px; font-family:'Orbitron'; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:4px;">
+            ⌬ ${m.deviation ? traduire(m.deviation.name).toUpperCase() : "AUCUNE DÉVIATION"}
+        </div>
+
+        <div style="margin-top:12px; width:100%;">
+            ${m.risks && m.risks.length > 0 ? m.risks.map(r => `
+                <div style="color:#ff4d4d; font-size:0.85em; margin-bottom:10px; padding-left:12px; border-left:2px solid #ff4d4d; line-height:1.4;">
+                    <b style="color:#fff; text-transform:uppercase;">${traduire(r.name || "")}</b><br>
+                    <span style="color:rgba(255,255,255,0.7);">${traduire(r.description || "")}</span>
+                </div>
+            `).join('') : '<div style="font-size:0.75em; color:#666;">Aucun malus</div>'}
+        </div>
+    </div>`;
+});
+
+            html += `</div>`;
+            box.innerHTML = html;
+
+            startTicker('archi_timer_final', selection.expiry);
+            return; 
+        }
+    }
+    
+    // Message si les données ne sont pas encore prêtes
+    html += `<div class="card" style="text-align:center; padding:20px; opacity:0.5; color:var(--accent); font-family:'Orbitron';">
+                // ATTENTE DE RÉCEPTION DES DONNÉES ARCHIMÉDÉE //
+             </div>`;
+    box.innerHTML = html;
+}
+
+  
+  
+else if (currentFilter === 'calendar1999') {
+    if (typeof box !== 'undefined' && lastJson && lastJson.calendar && lastJson.calendar.days) {
+        
+        let html = `
+            <div class="window-header">
+                <span>🐧 ${traduire("MAJ_HIVER_1999.EXE")}</span>
+                <span style="letter-spacing: 2px;">☃️ [ _ □ X ]</span>
+            </div>
+            <div style="padding:10px; background:#c0c0c0 !important;">
+                <h2 style="font-size:1.1em; margin:0 0 10px 0; color:#000 !important; text-align:center; border-bottom: 2px solid #808080;">
+                    ❄️ ${traduire("JANVIER")} 1999 ❄️
+                </h2>
+        `;
+        
+        lastJson.calendar.days.forEach(day => {
+            if (day.events && day.events.length > 0) {
+                html += `<div class="day-slot" style="margin-bottom:15px; border:1px solid #808080; padding:10px; background:#d4d0c8 !important; box-shadow: inset 1px 1px #fff, inset -1px -1px #808080;">
+                    <div style="font-size:0.75em; color:#000080 !important; font-weight:bold; margin-bottom:12px; text-decoration:underline; text-align:left;">
+                        LOG_DATE: ${new Date(day.date).toLocaleDateString('fr-FR')}
+                    </div>`;
+                
+                day.events.forEach(ev => {
+                    let iconeSrc = "melange.png"; 
+                    let couleurFaction = "#000080"; 
+                    
+                    let ttr = (ev.challenge && ev.challenge.title) ? ev.challenge.title.toUpperCase() : "";
+                    let ddc = (ev.challenge && ev.challenge.description) ? ev.challenge.description.toUpperCase() : "";
+                    let texteGlobal = ttr + " " + ddc;
+
+                    if (texteGlobal.includes("TECHROT")) {
+                        iconeSrc = "TechrotGlyph.png";
+                        couleurFaction = "#008000"; 
+                    } else if (texteGlobal.includes("SCALDRA")) {
+                        iconeSrc = "ScaldraGlyph.png";
+                        couleurFaction = "#800000"; 
+                    }
+
+                    if (ev.type === "To Do") {
+                        html += `
+                            <div style="display:flex; align-items:center; justify-content: space-between; gap:15px; margin-bottom:10px; padding:12px; border:2px inset #fff; background:#c0c0c0 !important;">
+                                <div style="text-align:left; flex-grow:1; color: #000000 !important;">
+                                    <div style="font-weight:bold; font-size:1.1em; text-transform: uppercase; color: #000000 !important;">
+                                        ${traduire(ev.challenge.title)}
+                                    </div>
+                                    <div style="font-size:0.85em; color: #222222 !important; margin-top:4px;">
+                                        ${traduire(ev.challenge.description)}
+                                    </div>
+                                </div>
+
+                                <div style="flex-shrink:0; : 3px inset #808080; padding: 5px; display: flex; align-items: center; justify-content: center; width: 110px; height: 110px;">
+                                    <img src="${iconeSrc}" 
+                                         style="width: 150px; height: 150px; image-rendering: pixelated; display: block; filter: none !important;" 
+                                         onerror="this.src='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; this.style.backgroundColor='${couleurFaction}';">
+                                </div>
+                            </div>`;
+                    } 
+                    else if (ev.type === "Big Prize!") {
+                        html += `
+                            <div style="display:flex; align-items:center; justify-content: space-between; gap:15px; margin-top:5px; padding:12px; background:#000080 !important; color:#ffffff !important; border:2px outset #fff;">
+                                <div style="text-align:left; flex-grow:1;">
+                                    <div style="font-size:1.1em; font-weight:bold; text-transform: uppercase; color:#ffffff !important;">
+                                        ${traduire(ev.reward)}
+                                    </div>
+                                    <div style="font-size:0.75em; color:#00ffff !important; font-weight:bold;">
+                                        >> ${traduire("RÉCOMPENSE !")} <<
+                                    </div>
+                                </div>
+                                <div style="width:50px; height:50px; background-color: #ffffff !important; border: 2px inset #000; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:24px;">
+                                    🎁
+                                </div>
+                            </div>`;
+                    }
+                });
+                html += `</div>`;
+            }
+        });
+        
+        html += `</div>`;
+        box.innerHTML = html;
+    }
+}
+
+
+
+
+else if (currentFilter === 'construction') {
+    // On récupère les données spécifiques à la construction
+    // Note : Il faudra faire un fetch sur /constructionProgress/ ou l'inclure dans lastJson
+    const constData = lastJson.constructionProgress || lastJson; 
+
+    if (constData) {
+        html += `
+            <div style="padding: 15px; text-align: center; border-bottom: 2px solid var(--accent); margin-bottom: 15px; background: linear-gradient(to bottom, var(--glow), transparent);">
+                <h2 style="font-family:'Orbitron'; color: var(--accent); margin:0; letter-spacing:2px; text-shadow: 0 0 10px var(--accent);">PROJETS DE CONSTRUCTION</h2>
+                <div style="color:#fff; font-size:0.85em; margin-top:5px; font-family:'Orbitron'; font-weight:bold;">
+                    STATUT : <span style="text-decoration: underline;">MENACE DÉTECTÉE</span>
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; padding: 10px;">
+                <div style="width: 100%; padding: 0 5px;">`;
+
+        // Configuration des deux projets
+        const projects = [
+            { 
+                name: "BALOR FOMORIAN", 
+                progress: constData.fomorianProgress || "0", 
+                color: "#ff4444", // Rouge Grineer
+                icon: "fomorian.png" 
+            },
+            { 
+                name: "RAZORBACK ARMADA", 
+                progress: constData.razorbackProgress || "0", 
+                color: "#00d4ff", // Bleu Corpus
+                icon: "jackal.png" 
+            }
+        ];
+
+        projects.forEach((p) => {
+            const percent = parseFloat(p.progress).toFixed(2);
+            html += `
+                <div class="row" style="background:var(--glass); border-left: 5px solid ${p.color}; margin-bottom:10px; padding:15px; display:flex; justify-content:space-between; align-items:center;">
+                    <div style="flex: 1;">
+                        <div style="color:${p.color}; font-size:0.7em; font-family:'Orbitron';">CIBLE ACTIVE</div>
+                        <div style="color:#fff; font-weight:bold;">${p.name}</div>
+                        <div class="prog-bar" style="margin-top:10px; height:4px; background:rgba(255,255,255,0.05);">
+                            <div class="prog-fill" style="width:${percent}%; background:${p.color}; box-shadow: 0 0 8px ${p.color};"></div>
+                        </div>
+                    </div>
+                    <div style="text-align:right; margin-left:15px;">
+                        <div style="font-family:'Orbitron'; color:${p.color}; font-weight:bold; font-size:1.1em;">${percent}%</div>
+                        <img src="${p.icon}" style="width: 200px; height: 200px; filter: drop-shadow(0 0 5px ${p.color}); object-fit: contain; margin-top:5px;">
+                    </div>
+                </div>`;
+        });
+
+        html += `</div></div>`;
+        box.innerHTML = html;
+    } else {
+        box.innerHTML = `<div style="text-align:center; padding:40px; color:var(--accent);">CHARGEMENT DES SYSTÈMES TACTIQUES...</div>`;
+    }
+}
+
+
+
+
+
+else if (currentFilter === 'circuit') {
+    const d = lastJson.duviriCycle;
+    
+    // Sous-boutons
+    html = `
+    <div class="sub-nav">
+        <button class="sub-btn ${currentSubFilter === 'normal' ? 'active' : ''}" onclick="setSubFilter('normal')">NORMAL</button>
+        <button class="sub-btn ${currentSubFilter === 'steel' ? 'active' : ''}" onclick="setSubFilter('steel')">ROUTE D'ACIER</button>
+    </div>`;
+
+    let inner = "";
+    if (d && d.choices) {
+        const isSteel = (currentSubFilter === 'steel');
+        const currentChoice = d.choices[isSteel ? 1 : 0];
+
+        inner = `<div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; padding:20px;">`;
+
+currentChoice.choices.forEach(item => {
+    const isSteel = (currentSubFilter === 'steel');
+    
+    // 1. On nettoie le nom pour l'affichage (SOMA, LEX, etc.)
+    const nomCourt = item.replace(/Incarnon/gi, '').replace(/Genesis/gi, '').trim();
+    
+    // 2. On prépare l'image
+    let imgUrl = getWikiImage(item, isSteel);
+
+    // --- AJOUT MANUEL POUR ACK & BRUNT ---
+    if (item.includes("Ack") && item.includes("Brunt")) {
+        imgUrl = "ACKANDBRUNT.png"; 
+    }
+    // Tu peux ajouter d'autres "if" ici si d'autres ne marchent pas
+    // -------------------------------------
+
+    inner += `
+    <div class="row" style="display: flex; flex-direction: row; align-items: center; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--accent); border-radius: 10px; margin-bottom: 8px;">
+        
+        <div style="width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <img src="${imgUrl}" 
+                 style="max-width: 100%; max-height: 100%; filter: drop-shadow(0 0 5px var(--accent));" 
+                 onerror="this.src='https://raw.githubusercontent.com/Warframe-Stat-us/wfos-inventory-assets/master/data/img/unknown.png'">
+        </div>
+
+        <div style="margin-left: 15px; text-align: left; flex-grow: 1;">
+            <div style="font-family:'Orbitron'; font-size:1.2em; font-weight:bold; color:#fff;">
+                ${traduire(nomCourt).toUpperCase()}
+            </div>
+            <div style="font-size:0.6em; color:var(--accent); letter-spacing:4px; margin-top:5px; font-weight:bold;">
+                ${isSteel ? 'INCARNON' : 'WARFRAME'}
+            </div>
+        </div>
+    </div>`;
+});
+
+
+        inner += `</div>`;
+    }
+    box.innerHTML = html + inner;
+}
+     
+     
+     
+     
+        // --- BLOC SYNDICAT (CETUS & FORTUNA) ---
+        else if(currentFilter === 'syndicate') {
+            // 1. Barre de navigation avec les deux boutons
+           html = `
+            <div class="sub-nav">
+                <button class="sub-btn ${currentSubFilter === 'cetus' ? 'active' : ''}" onclick="setSubFilter('cetus'); render();">CETUS</button>
+                <button class="sub-btn ${currentSubFilter === 'fortuna' ? 'active' : ''}" onclick="setSubFilter('fortuna'); render();">FORTUNA</button>
+                <button class="sub-btn ${currentSubFilter === 'deimos' ? 'active' : ''}" onclick="setSubFilter('deimos'); render();">DEIMOS</button>
+                <button class="sub-btn ${currentSubFilter === 'steelPath' ? 'active' : ''}" onclick="setSubFilter('steelPath'); render();">STEEL PATH</button>
+                </div>`;
+
+            
+
+            // 2. LOGIQUE POUR CETUS
+            if(currentSubFilter === 'cetus') {
+                const cetusData = lastJson.syndicateMissions ? lastJson.syndicateMissions.find(m => 
+                    m.syndicate === "Ostrons" || m.syndicate === "Ostron"
+                ) : null;
+                
+                if (cetusData && cetusData.jobs) {
+                    cetusData.jobs.forEach((job, i) => {
+                        const totalRep = job.standingStages ? job.standingStages.reduce((a, b) => a + b, 0) : 0;
+html += `
+    <div class="row" style="flex-direction:column; align-items:flex-start; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex; width:100%; justify-content:space-between; align-items:center;">
+            <span class="status" style="font-family:'Orbitron'; font-size:0.75em; color:${job.enemyLevels && job.enemyLevels[1] >= 100 ? '#ff4d4d' : 'var(--accent)'}; text-shadow: ${job.enemyLevels && job.enemyLevels[1] >= 100 ? '0 0 5px rgba(255,77,77,0.5)' : 'none'};">
+                ${job.enemyLevels && job.enemyLevels[1] >= 100 ? 'STEEL PATH' : 'LVL'} 
+                ${job.enemyLevels[0] === job.enemyLevels[1] ? job.enemyLevels[1] : job.enemyLevels[0] + '-' + job.enemyLevels[1]}
+            </span>
+            
+            <span class="timer" id="ct${i}" style="font-family:'Orbitron'; font-size:0.8em; color:var(--accent); font-weight:bold; opacity:0.9;"></span>
+        </div>
+
+        <div style="font-weight:bold; font-size:0.9em; color:var(--text-color, #eee); margin-top:5px; text-transform:uppercase; letter-spacing:1px;">
+            ${traduire(job.type)}
+        </div>
+
+        <div style="color:#00ff88; font-size:0.75em; font-weight:bold; margin-top:6px; font-family:'Orbitron';">
+            +${totalRep.toLocaleString('fr-FR')} RÉPUTATION
+        </div>
+    </div>`;
+
+                    });
+                    box.innerHTML = html;
+                    cetusData.jobs.forEach((job, i) => startTicker('ct' + i, cetusData.expiry));
+                    return; 
+                }
+            } 
+            
+            // 3. LOGIQUE POUR FORTUNA 
+            else if(currentSubFilter === 'fortuna') {
+                const fortunaData = lastJson.syndicateMissions ? lastJson.syndicateMissions.find(m => 
+                    m.syndicate === "Union Solaris"
+                ) : null;
+                
+                if (fortunaData && fortunaData.jobs) {
+                    fortunaData.jobs.forEach((job, i) => {
+                        const totalRep = job.standingStages ? job.standingStages.reduce((a, b) => a + b, 0) : 0;
+html += `
+    <div class="row" style="flex-direction:column; align-items:flex-start; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex; width:100%; justify-content:space-between; align-items:center;">
+            <span class="status" style="font-family:'Orbitron'; font-size:0.75em; color:${(job.enemyLevels && parseInt(job.enemyLevels[1]) >= 100) ? '#ff4d4d' : 'var(--accent)'};">
+                ${(job.enemyLevels && parseInt(job.enemyLevels[1]) >= 100) ? 'STEEL PATH' : 'LVL'} 
+                ${job.enemyLevels ? (parseInt(job.enemyLevels[0]) === parseInt(job.enemyLevels[1]) ? job.enemyLevels[1] : job.enemyLevels[0] + '-' + job.enemyLevels[1]) : '??'}
+            </span>
+            <span class="timer" id="ft${i}" style="font-family:'Orbitron'; font-size:0.8em; color:var(--accent); font-weight:bold;"></span>
+        </div>
+        <div style="font-weight:bold; font-size:0.9em; color:var(--text-color, #eee); margin-top:5px; text-transform:uppercase;">
+            ${traduire(job.type)}
+        </div>
+        <div style="color:#00ff88; font-size:0.75em; font-weight:bold; margin-top:6px; font-family:'Orbitron';">
+            +${totalRep.toLocaleString('fr-FR')} RÉPUTATION
+        </div>
+    </div>`;
+
+                    });
+                    box.innerHTML = html;
+                    fortunaData.jobs.forEach((job, i) => startTicker('ft' + i, fortunaData.expiry));
+                    return;
+                }
+            }
+        
+            // 4. LOGIQUE POUR DEIMOS (Les Entrati)
+            else if(currentSubFilter === 'deimos') {
+                const deimosData = lastJson.syndicateMissions ? lastJson.syndicateMissions.find(m => 
+                    m.syndicate && (m.syndicate.includes("Entrati") || m.syndicate.includes("Mère"))
+                ) : null;
+                
+                if (deimosData && deimosData.jobs) {
+                    deimosData.jobs.forEach((job, i) => {
+const totalRep = job.standingStages ? job.standingStages.reduce((a, b) => a + b, 0) : 0;
+
+html += `
+    <div class="row" style="flex-direction:column; align-items:flex-start; padding: 12px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex; width:100%; justify-content:space-between; align-items:center;">
+            <span class="status" style="font-family:'Orbitron'; font-size:0.75em; color:${(job.enemyLevels && parseInt(job.enemyLevels[1]) >= 100) ? '#ff4d4d' : 'var(--accent)'};">
+                ${(job.enemyLevels && parseInt(job.enemyLevels[1]) >= 100) ? 'STEEL PATH' : 'LVL'} 
+                ${job.enemyLevels ? (parseInt(job.enemyLevels[0]) === parseInt(job.enemyLevels[1]) ? job.enemyLevels[1] : job.enemyLevels[0] + '-' + job.enemyLevels[1]) : '??'}
+            </span>
+            <span class="timer" id="nc${i}" style="font-family:'Orbitron'; font-size:0.8em; color:var(--accent); font-weight:bold;"></span>
+        </div>
+
+        <div style="font-weight:bold; font-size:0.9em; color:var(--text-color, #eee); margin-top:5px; text-transform:uppercase;">
+            ${traduire(job.type || job.title)}
+        </div>
+
+        <div style="color:#00ff88; font-size:0.75em; font-weight:bold; margin-top:6px; font-family:'Orbitron';">
+            +${totalRep} JETONS DE LA MÈRE
+        </div>
+    </div>`;
+                    });
+                    box.innerHTML = html;
+                    
+                    deimosData.jobs.forEach((job, i) => {
+                        setTimeout(() => startTicker('dm' + i, deimosData.expiry), 50);
+                    });
+                    return;
+                } else {
+                    box.innerHTML = html + `<div class="status" style="text-align:center; padding:20px; opacity:0.5;">DEIMOS : MISES À PRIX NON DISPONIBLES</div>`;
+                    return;
+                }
+            }
+                        // 5. LOGIQUE POUR LE STEEL PATH 
+            else if(currentSubFilter === 'steelPath') {
+                const sp = lastJson.steelPath;
+                
+                // 1. On affiche l'item de la semaine (Teshin)
+                if (sp && sp.currentReward) {
+                    html += `
+                        <div style="background:rgba(255,50,50,0.15); padding:15px; border-radius:10px; border:1px solid #ff4d4d; margin-bottom:15px; text-align:center;">
+                            <div style="font-size:0.7em; color:#ff4d4d; font-family:'Orbitron';">ROTATION HEBDO</div>
+                            <div style="font-weight:bold; color:#fff; font-size:1.1em;">${sp.currentReward.name}</div>
+                            <div style="font-size:0.8em; color:var(--accent);">${sp.currentReward.cost} ESSENCES</div>
+                        </div>`;
+                }
+
+                // 2. On va chercher les 5 INCURSIONS dans les "events"
+                const incursions = (lastJson.events || []).filter(e => 
+                    e.description && e.description.toLowerCase().includes("steel path")
+                );
+
+                if(incursions.length > 0) {
+                    html += `<div style="font-family:'Orbitron'; font-size:0.7em; color:#888; margin-bottom:10px; border-bottom:1px solid #333;">INCURSIONS DU JOUR</div>`;
+                    
+                    incursions.forEach((inc, i) => {
+                        html += `
+                            <div class="row">
+                                <div style="display:flex; flex-direction:column;">
+                                    <span style="color:#ff4d4d; font-size:0.85em; font-weight:bold;">${inc.node.toUpperCase()}</span>
+                                    <span style="font-size:0.7em; color:#aaa;">${inc.description.replace("Steel Path Incursion - ", "")}</span>
+                                </div>
+                                <span class="timer" id="sp${i}"></span>
+                            </div>`;
+                    });
+                    
+                    box.innerHTML = html;
+                    
+                    // On lance les timers pour chaque incursion
+                    incursions.forEach((inc, i) => {
+                        setTimeout(() => startTicker('sp'+i, inc.expiry), 50);
+                    });
+                } else {
+                    html += `<div class="status" style="text-align:center; padding:20px; opacity:0.5;"></div>`;
+                    box.innerHTML = html;
+                }
+                return;
+            }
+
+
+        }//
+
+     
+// --- BLOC CHASSE ARCHONTE ---
+else if(currentFilter === 'archon_hunt') {
+    const archonData = lastJson.archonHunt || (lastJson.sorties ? lastJson.sorties.find(s => s.boss && s.boss.includes("Archon")) : null);
+    
+    if (archonData) {
+        // 1. DÉTECTION DU BOSS ET DE L'ICÔNE
+        const bossName = (archonData.boss || "Inconnu").toLowerCase();
+        let bossIcon = "icon.png"; 
+
+        if(bossName.includes("boreal")) bossIcon = "boreal.png";
+        else if(bossName.includes("amar")) bossIcon = "amar.png";
+        else if(bossName.includes("nira")) bossIcon = "nira.png";
+
+        html += `
+            <div style="padding: 15px; text-align: center; border-bottom: 2px solid var(--accent); margin-bottom: 15px; background: linear-gradient(to bottom, var(--glow), transparent);">
+                <h2 style="font-family:'Orbitron'; color: var(--accent); margin:0; letter-spacing:2px; text-shadow: 0 0 10px var(--accent);">CHASSE AUX ARCHONTES</h2>
+                <div style="color:#fff; font-size:0.85em; margin-top:5px; font-family:'Orbitron'; font-weight:bold;">
+                    CIBLE : <span style="text-decoration: underline;">${bossName.toUpperCase()}</span>
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; padding: 10px;">
+                <div style="background: var(--glass); border: 1px solid var(--accent); border-radius: 10px; padding: 15px; width: 90%; text-align: center; margin-bottom: 20px; box-shadow: inset 0 0 15px var(--glow);">
+                    <div id="archon_timer" style="font-family:'Orbitron'; font-size: 1.6em; color: var(--accent); font-weight: bold;">--D --H --M --S</div>
+                </div>
+                <div style="width: 100%; padding: 0 5px;">`;
+
+        const missions = archonData.missions || archonData.variants || [];
+        missions.forEach((m, index) => {
+            let type = (m.type || m.missionType || "Mission").replace("Archon Hunt ", "").toUpperCase();
+            html += `
+                <div class="row" style="background:var(--glass); border-left: 5px solid var(--accent); margin-bottom:10px; padding:15px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="color:var(--accent); font-size:0.7em; font-family:'Orbitron';">PHASE 0${index + 1}</div>
+                        <div style="color:#fff; font-weight:bold;">${type}</div>
+                        <div style="color:#888; font-size:0.8em;">${m.node || "Secteur Inconnu"}</div>
+                    </div>
+                    <img src="${bossIcon}" style="width: 40px; height: 40px; filter: drop-shadow(0 0 5px var(--accent)); object-fit: contain;">
+                </div>`;
+        });
+
+        html += `</div></div>`;
+        box.innerHTML = html;
+        
+        setTimeout(() => {
+            if (document.getElementById('archon_timer')) startTicker('archon_timer', archonData.expiry);
+        }, 100);
+    } else {
+        box.innerHTML = `<div style="text-align:center; padding:40px; color:var(--accent);">SYNCHRONISATION DES DONNÉES...</div>`;
+    }
+}
+
+
+
+
+
+
+        // --- BLOC FISSURES ---
+        else if(currentFilter === 'fissures') {
+            const sortedFissures = (lastJson.fissures || []).sort((a,b) => a.tierNum - b.tierNum);
+            sortedFissures.forEach((f, i) => {
+                html += `<div class="row" style="gap:10px">
+                    <div style="display:flex; flex-direction:column; flex:1;">
+                        <span class="status ${f.isHard ? 'steel' : ''}">${f.isHard ? "ROUTE D'ACIER" : f.tier}</span>
+                        <span class="node-info">${f.node} - ${f.missionType}</span>
+                    </div>
+                    <span class="timer" id="fi${i}"></span>
+                </div>`;
+            });
+            box.innerHTML = html;
+            sortedFissures.forEach((f, i) => startTicker('fi'+i, f.expiry));
+        }
+
+
+        }
+        
+ function startTicker(id, expiry) {
+    const el = document.getElementById(id);
+    if(!el || !expiry) return;
+
+    function update() {
+        // Correction du calcul de temps pour être compatible tout support
+        const diff = new Date(expiry).getTime() - new Date().getTime();
+        
+        if(diff <= 0) {
+            el.innerHTML = "EXPIRÉ";
+            return;
+        }
+        
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        
+        // AFFICHAGE DYNAMIQUE
+        if (d > 0) {
+            // Si c'est long (Archonte/Varzia) : 6J 12H 30M
+            el.innerHTML = `${d}J ${h}H ${m}M ${s}S`;
+        } else {
+            // Si c'est court (Cetus/Fissures) : 45M 12S
+            el.innerHTML = `${h > 0 ? h + 'H ' : ''}${m}M ${s}S`;
+        }
+    }
+    
+    update();
+    const interval = setInterval(() => {
+        if(!document.getElementById(id)) {
+            clearInterval(interval);
+            return;
+        }
+        update();
+    }, 1000);
+}
+
+    
+
+        
+        
+        async function refresh() {
+            try {
+                const r = await fetch('https://api.warframestat.us/pc?language=fr');
+                lastJson = await r.json(); render();
+            } catch(e) {}
+        }
+
+        window.onload = () => {
+            const saved = localStorage.getItem('wf_grineer_save');
+            applyCustomColor(saved || '#d4af37'); 
+            refresh(); setInterval(refresh, 60000);
+        };
+   
+   function togglePhoto() {
+    const overlay = document.getElementById('photoOverlay');
+    // Si la photo est cachée, on l'affiche, sinon on la cache
+    if (overlay.style.display === 'none' || overlay.style.display === '') {
+        overlay.style.display = 'flex';
+    } else {
+        overlay.style.display = 'none';
+    }
+}
+
+
+function getWikiImage(name, isSteel) {
+    // Nettoyage : "Soma Incarnon Genesis" -> "SomaIncarnonGenesis"
+    let cleanName = name.replace(/&/g, '').replace(/\s+/g, '');
+
+    if (isSteel) {
+        // ON ENLÈVE "Assets/" car le HTML est déjà dedans !
+        // Le code va chercher directement le dossier "icon" qui est à côté du HTML
+        return `icon/icon_incarnon/${cleanName}.png`;
+    } else {
+        // Pour les Warframes, le Wiki fonctionne toujours car c'est un lien internet
+        let frameName = cleanName.replace('IncarnonGenesis', '');
+        return `https://wiki.warframe.com/w/Special:Redirect/file/${frameName}Icon272.png`;
+    }
+}
+
+
+
+
+
+
+
+
+
+    </script>
+    
+    <script>
+//
+setInterval(() => {
+    // On récupère TA couleur sauvegardée (wf_grineer_save)
+    const maCouleur = localStorage.getItem('wf_grineer_save') || '#d4af37';
+    
+    // On cherche tous les éléments qui contiennent le symbole ⌬
+    const tousLesElements = document.querySelectorAll('h1, h2, h3, div, span');
+    
+    tousLesElements.forEach(el => {
+        if (el.innerText.includes('⌬')) {
+            el.style.color = maCouleur; // Applique ta couleur (Grineer, Corpus, etc.)
+            el.style.transition = "color 0.5s"; // Petit effet fluide
+        }
+    });
+}, 1000); // Vérifie chaque seconde
+</script>
+
+    
+   
+<script src="database.js"></script> <script>
+    // Ton code principal qui utilise le dico...
+
+
+</script>
+
+</body>
+</html>
