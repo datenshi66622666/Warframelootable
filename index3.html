@@ -1114,18 +1114,25 @@ else if(currentFilter === 'archon_hunt') {
     
     if (archonData) {
         // 1. DÉTECTION DU BOSS ET DE L'ICÔNE
-        const bossName = (archonData.boss || "Inconnu").toLowerCase();
+        // On utilise le "boss" ou le "missionType" pour être sûr
+        const bossRaw = (archonData.boss || "Inconnu");
+        const bossName = bossRaw.toLowerCase();
         let bossIcon = "icon.png"; 
 
-        if(bossName.includes("boreal")) bossIcon = "boreal.png";
-        else if(bossName.includes("amar")) bossIcon = "amar.png";
-        else if(bossName.includes("nira")) bossIcon = "nira.png";
+        // Détection ultra-souple pour Boreal, Amar et Nira
+        if(bossName.includes("boreal") || bossName.includes("boréal")) {
+            bossIcon = "boreal.png";
+        } else if(bossName.includes("amar")) {
+            bossIcon = "amar.png";
+        } else if(bossName.includes("nira")) {
+            bossIcon = "nira.png";
+        }
 
         html += `
             <div style="padding: 15px; text-align: center; border-bottom: 2px solid var(--accent); margin-bottom: 15px; background: linear-gradient(to bottom, var(--glow), transparent);">
                 <h2 style="font-family:'Orbitron'; color: var(--accent); margin:0; letter-spacing:2px; text-shadow: 0 0 10px var(--accent);">CHASSE AUX ARCHONTES</h2>
                 <div style="color:#fff; font-size:0.85em; margin-top:5px; font-family:'Orbitron'; font-weight:bold;">
-                    CIBLE : <span style="text-decoration: underline;">${bossName.toUpperCase()}</span>
+                    CIBLE : <span style="text-decoration: underline;">${bossRaw.toUpperCase()}</span>
                 </div>
             </div>
             <div style="display: flex; flex-direction: column; align-items: center; padding: 10px;">
@@ -1144,7 +1151,7 @@ else if(currentFilter === 'archon_hunt') {
                         <div style="color:#fff; font-weight:bold;">${type}</div>
                         <div style="color:#888; font-size:0.8em;">${m.node || "Secteur Inconnu"}</div>
                     </div>
-                    <img src="${bossIcon}" style="width: 40px; height: 40px; filter: drop-shadow(0 0 5px var(--accent)); object-fit: contain;">
+                    <img src="${bossIcon}" style="width: 45px; height: 45px; filter: drop-shadow(0 0 5px var(--accent)); object-fit: contain;" onerror="this.src='icon.png'">
                 </div>`;
         });
 
@@ -1158,6 +1165,7 @@ else if(currentFilter === 'archon_hunt') {
         box.innerHTML = `<div style="text-align:center; padding:40px; color:var(--accent);">SYNCHRONISATION DES DONNÉES...</div>`;
     }
 }
+
 
 
 
